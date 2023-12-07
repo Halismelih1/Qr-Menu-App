@@ -6,6 +6,9 @@ import { app } from './firebaseConfig';
 import Welcome from './Components/Welcome';
 import Menu from './Components/Menu';
 import Login from './Components/Login';
+import Admin from './Components/Admin';
+import { BrowserRouter as Router, Route, Routes, BrowserRouter } from "react-router-dom";
+
 
 // Firebase Firestore koleksiyon referansı
 import { getFirestore, collection, query, where } from 'firebase/firestore';
@@ -19,7 +22,6 @@ const App = () => {
   const [categoryItems, setCategoryItems] = useState([]);
   const [currentView, setCurrentView] = useState('welcome');
   const [isAdminClicked, setIsAdminClicked] = useState(false);
-
 
   // useCollectionData hook'u ile kategorileri çekme
   const [categoriesData, loadingCategories, errorCategories] = useCollectionData(
@@ -55,31 +57,27 @@ const App = () => {
     }
   }, [errorCategories, errorData]);
 
- 
   const handleAdminClick = () => {
     setIsAdminClicked(true);
     setCurrentView('login');
   };
+
   const handleMenuButtonClick = () => {
     setCurrentView('menu');
   };
 
-  
 
+
+ 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-      
-      {currentView === 'welcome' && (
-        <Welcome onMenuButtonClick={handleMenuButtonClick}
-        handleAdminClick={handleAdminClick} />
-      )}
-      {currentView === 'menu' && (
-        <Menu menuItems={categoryItems} categories={categories} />    
-      )}
-      
-      {isAdminClicked && <Login />}
-
-    </div>
+    
+      <Routes>
+        <Route path='/' element={<Welcome />} />
+        <Route path='/menu' element={<Menu categories={categories} categoryItems={categoryItems} />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/admin' element={<Admin />} />
+      </Routes>
+   
   );
 };
 

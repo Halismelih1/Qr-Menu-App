@@ -1,9 +1,9 @@
 // src/Components/Menu.jsx
 import React, { useState } from 'react';
 
-const Menu = ({ menuItems, categories }) => {
+const Menu = ({ categoryItems, categories }) => {
 
-  const [filteredItems, setFilteredItems] = useState(menuItems);
+  const [filteredItems, setFilteredItems] = useState(categoryItems);
 
   // Kategoriye göre filtreleme yapacak fonksiyon
   const filterItemsByCategory = (category) => {
@@ -12,7 +12,7 @@ const Menu = ({ menuItems, categories }) => {
       setFilteredItems(menuItems);
     } else {
       // Diğer durumda, seçilen kategoriye göre filtrele
-      const filtered = menuItems.filter((item) => item.category === category);
+      const filtered = categoryItems.filter((item) => item.category === category);
       setFilteredItems(filtered);
     }
   };
