@@ -7,9 +7,6 @@ import Login from './Components/Login';
 import Admin from './Components/Admin';
 import PrivateRoute from './PrivateRoute';
 import { BrowserRouter as Router, Route, Routes,useNavigate } from "react-router-dom";
-
-
-// Firebase Firestore koleksiyon referansı
 import { getFirestore, collection, query, where } from 'firebase/firestore';
 
 
@@ -23,11 +20,18 @@ const App = () => {
   const [currentView, setCurrentView] = useState('welcome');
   const [isAdminClicked, setIsAdminClicked] = useState(false);
 
+  const navigate =useNavigate();
+
+
   // useCollectionData hook'u ile kategorileri çekme
   const [categoriesData, loadingCategories, errorCategories] = useCollectionData(
     menuRef,
     { idField: 'id' }
   );
+
+  useEffect(()=>{
+    navigate("/")
+  },[])
 
   useEffect(() => {
     if (categoriesData) {

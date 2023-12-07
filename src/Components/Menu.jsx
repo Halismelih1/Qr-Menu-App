@@ -21,21 +21,14 @@ const Menu = ({ categoryItems, categories }) => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col items-center c text-white">
       {/* Kategori filtreleme düğmeleri */}
       {categories.length > 0 && (
         <div className="flex flex-wrap justify-center mt-4">
-          <button
-            key="Tümü"
-            className="p-4 m-2 bg-blue-500 text-white rounded-md"
-            onClick={() => filterItemsByCategory('Tümü')}
-          >
-            Tümü
-          </button>
           {categories.map((category) => (
             <button
               key={category}
-              className="p-4 m-2 bg-blue-500 text-white rounded-md"
+              className="p-4 m-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
               onClick={() => filterItemsByCategory(category)}
             >
               {category}
@@ -48,8 +41,8 @@ const Menu = ({ categoryItems, categories }) => {
       {filteredItems.length > 0 ? (
         <div className="flex flex-col items-center mt-8 w-full">
           {filteredItems.map((item) => (
-            <div key={item.id} className="mb-4">
-              <p className="text-xl font-semibold">{item.name}</p>
+            <div key={item.id} className="mb-4 p-4 bg-white rounded-md shadow-md w-64">
+              <p className="text-xl font-semibold text-gray-800">{item.name}</p>
               <p className="text-gray-400">Fiyat: ${item.price}</p>
               {/* Eğer description mevcutsa göster */}
               {item.description && (
@@ -57,13 +50,13 @@ const Menu = ({ categoryItems, categories }) => {
               )}
               {/* Eğer picture mevcutsa göster */}
               {item.picture && (
-                <img src={item.picture} alt={item.name} className="w-32 h-32" />
+                <img src={item.picture} alt={item.name} className="w-full h-32 object-cover mt-2" />
               )}
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-white">Bu kategoride menü bulunmamaktadır.</p>
+        <p className="text-white mt-8">Bu kategoride menü bulunmamaktadır.</p>
       )}
     </div>
   );

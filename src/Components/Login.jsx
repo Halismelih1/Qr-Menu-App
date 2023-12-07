@@ -61,41 +61,35 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-    <div className="bg-white p-8 rounded-md shadow-md w-96">
+    <div className="min-h-screen flex items-center justify-center bg-gray-200">
+      <div className="bg-white p-8 rounded-md shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Giriş Yap</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600">
-              E-posta
-            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-              placeholder="E-posta adresinizi girin"
+              className="p-2 w-full border-b border-gray-300 placeholder-gray-500 focus:outline-none"
+              placeholder="E-posta adresiniz"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600">
-              Şifre
-            </label>
+          <div className="mb-6">
             <input
               type="password"
               id="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-              placeholder="Şifrenizi girin"
+              className="p-2 w-full border-b border-gray-300 placeholder-gray-500 focus:outline-none"
+              placeholder="Şifreniz"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
           >
             Giriş Yap
           </button>
