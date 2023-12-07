@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { app } from './firebaseConfig';
@@ -7,11 +5,13 @@ import Welcome from './Components/Welcome';
 import Menu from './Components/Menu';
 import Login from './Components/Login';
 import Admin from './Components/Admin';
-import { BrowserRouter as Router, Route, Routes, BrowserRouter } from "react-router-dom";
+import PrivateRoute from './PrivateRoute';
+import { BrowserRouter as Router, Route, Routes,useNavigate } from "react-router-dom";
 
 
 // Firebase Firestore koleksiyon referansı
 import { getFirestore, collection, query, where } from 'firebase/firestore';
+
 
 const firestore = getFirestore(app);
 const menuRef = collection(firestore, 'Menu');
@@ -75,7 +75,14 @@ const App = () => {
         <Route path='/' element={<Welcome />} />
         <Route path='/menu' element={<Menu categories={categories} categoryItems={categoryItems} />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/admin' element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute
+              element={<Admin />}
+            />
+          }
+        />
       </Routes>
    
   );

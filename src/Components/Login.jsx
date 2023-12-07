@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { auth } from '../firebaseConfig';
-import {useNavigate} from 'react-router-dom'
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase/auth';
 
 
 
@@ -10,23 +10,52 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
+
+  useEffect(() => {
+    // Firebase Authentication'da oturum durumu değiştiğinde çalışacak olan fonksiyon
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    // Component unmount olduğunda listener'ı temizle
+    return () => unsubscribe();
+  }, []);
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      // Firebase Authentication ile giriş yapma işlemi
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-      // Giriş başarılıysa /admin sayfasına yönlendirme
-      navigate('/admin');
+      console.log("Giriş başarılı:", userCredential);
+  
+      // Kullanıcının oturum açık olup olmadığını kontrol et
+      const user = getAuth().currentUser;
+      console.log("Current User:", user);
+  
+      if (user) {
+        // Oturum açık ise /admin sayfasına yönlendir
+        console.log("Yönlendirme yapılıyor...");
+        navigate('/admin');
+      } else {
+        console.error("Kullanıcı oturum açık değil.");
+      }
     } catch (error) {
-      // Hata durumunda hatayı state'e kaydetme
+      console.error("Giriş hatası:", error);
       setError(error.message);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, navigate]);
 
 
   return (
