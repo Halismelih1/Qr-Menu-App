@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase
 
 
 
+
 const Login = () => {
 
   const [email, setEmail] = useState('');
@@ -42,6 +43,7 @@ const Login = () => {
         // Oturum açık ise /admin sayfasına yönlendir
         console.log("Yönlendirme yapılıyor...");
         navigate('/admin');
+        
       } else {
         console.error("Kullanıcı oturum açık değil.");
       }
