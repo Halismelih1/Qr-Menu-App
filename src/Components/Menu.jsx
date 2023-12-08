@@ -1,22 +1,34 @@
 // src/Components/Menu.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Menu = ({ categoryItems, categories }) => {
 
   const [filteredItems, setFilteredItems] = useState(categoryItems);
+  const [selectedCategory, setSelectedCategory] = useState('Tümü');
 
-  // Kategoriye göre filtreleme yapacak fonksiyon
+  useEffect(() => {
+    filterItemsByCategory(selectedCategory);
+    toast.success('Hoşgeldiniz!', {
+      position: 'bottom-right', // Bildirimin pozisyonu
+      autoClose: 3000, // 3 saniye sonra otomatik kapanma
+      closeOnClick: false, // Tıklanınca kapatma
+    });
+  }, []);
+
   const filterItemsByCategory = (category) => {
-    if (category === 'Tümü') {
-      // Eğer "Tümü" seçiliyse, tüm menüleri göster
-      setFilteredItems(menuItems);
+    if (category === selectedCategory) {
+      // Eğer aynı kategoriye tekrar tıklanırsa, içeriği kapat
+      setSelectedCategory('Tümü');
+      setFilteredItems([]);
     } else {
       // Diğer durumda, seçilen kategoriye göre filtrele
       const filtered = categoryItems.filter((item) => item.category === category);
+      setSelectedCategory(category);
       setFilteredItems(filtered);
     }
   };
-
 
 
 
@@ -58,6 +70,7 @@ const Menu = ({ categoryItems, categories }) => {
       ) : (
         <p className="text-white mt-8">Bu kategoride menü bulunmamaktadır.</p>
       )}
+      <ToastContainer/>
     </div>
   );
 };

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase/auth';
-
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Login = () => {
@@ -33,15 +33,12 @@ const Login = () => {
   
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Giriş başarılı:", userCredential);
   
       // Kullanıcının oturum açık olup olmadığını kontrol et
       const user = getAuth().currentUser;
-      console.log("Current User:", user);
   
       if (user) {
         // Oturum açık ise /admin sayfasına yönlendir
-        console.log("Yönlendirme yapılıyor...");
         navigate('/admin');
         
       } else {
@@ -49,6 +46,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Giriş hatası:", error);
+      toast.warning("Giriş Bilgilerinizi Kontrol Edin")
       setError(error.message);
     }
   };
@@ -67,6 +65,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
+              required
               type="email"
               id="email"
               name="email"
@@ -78,6 +77,7 @@ const Login = () => {
           </div>
           <div className="mb-6">
             <input
+              required
               type="password"
               id="password"
               name="password"
@@ -95,6 +95,7 @@ const Login = () => {
           </button>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
