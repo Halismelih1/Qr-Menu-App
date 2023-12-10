@@ -25,6 +25,8 @@ const Admin = () => {
   const [addCategoryModalIsOpen, setAddCategoryModalIsOpen] = useState(false);
   const [editCategoryModalIsOpen, setEditCategoryModalIsOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null); 
+  const [addContentModalIsOpen, setAddContentModalIsOpen] = useState(null); 
+  
 
   
 
@@ -268,7 +270,6 @@ const Admin = () => {
         alert('Lütfen bir kategori seçin.');
         return;
       }
-  
       setAddContentModalIsOpen(true);
     } catch (error) {
       console.error('İçerik ekleme hatası:', error);
@@ -406,7 +407,7 @@ const Admin = () => {
         Add Category
       </button>
       <ModalComponentAddContent
-       isOpen={addCategoryModalIsOpen} 
+      isOpen={addContentModalIsOpen} 
        onClose={handleModalAddContentClose} 
        onAdd={handleModalAddContentSave} 
       />
