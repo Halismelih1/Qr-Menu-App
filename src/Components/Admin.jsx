@@ -10,6 +10,8 @@ import ModalComponentAddContent from '../ModalComponentAddContent';
 import ModalComponentEditCategory from '../ModalComponetEditCategory'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 const Admin = () => {
 
@@ -134,33 +136,46 @@ const Admin = () => {
   };
   
   const handleDeleteCategory = async (category) => {
-    // Kullanıcıya silme işleminden önce bir onay mesajı göster
-    const isConfirmed = window.confirm(`"${category}" kategorisini silmek istediğinizden emin misiniz?`);
+    // Kullanıcıya silme işleminden önce bir onay modalı göster
+    confirmAlert({
+      title: 'Kategoriyi Sil',
+      message: `"${category}" kategorisini silmek istediğinizden emin misiniz?`,
+      buttons: [
+        {
+          label: 'Evet',
+          onClick: async () => {
+            try {
+              // İlgili kategoriyi ve içerikleri silme işlemi
+              const categoryCollection = collection(db, 'Menu');
+              const categoryQuery = query(categoryCollection, where('category', '==', category));
+              const categorySnapshot = await getDocs(categoryQuery);
 
-    if (isConfirmed) {
-      try {
-        // İlgili kategoriyi ve içerikleri silme işlemi
-        const categoryCollection = collection(db, 'Menu');
-        const categoryQuery = query(categoryCollection, where('category', '==', category));
-        const categorySnapshot = await getDocs(categoryQuery);
+              const batch = writeBatch(db);
+              categorySnapshot.forEach((categoryDoc) => {
+                const docRef = doc(db, 'Menu', categoryDoc.id);
+                batch.delete(docRef);
+              });
 
-        const batch = writeBatch(db);
-        categorySnapshot.forEach((categoryDoc) => {
-          const docRef = doc(db, 'Menu', categoryDoc.id);
-          batch.delete(docRef);
-        });
+              await batch.commit();
 
-        await batch.commit();
+              // Kategorileri ve içerikleri tekrar çekme işlemi
+              fetchData();
 
-        // Kategorileri ve içerikleri tekrar çekme işlemi
-        fetchData();
-
-        toast.success(`"${category}" kategorisi başarıyla silindi.`);
-      } catch (error) {
-        console.error('Kategori silme hatası:', error);
-        toast.error('Kategori silme işlemi başarısız oldu.');
-      }
-    }
+              toast.success(`"${category}" kategorisi başarıyla silindi.`);
+            } catch (error) {
+              console.error('Kategori silme hatası:', error);
+              toast.error('Kategori silme işlemi başarısız oldu.');
+            }
+          },
+        },
+        {
+          label: 'Hayır',
+          onClick: () => {
+            // Kullanıcı "Hayır" derse bir şey yapmaya gerek yok
+          },
+        },
+      ],
+    });
   };
 
   const handleEditContent = (content) => {
@@ -211,26 +226,39 @@ const Admin = () => {
 
 
   const handleDeleteContent = async (contentId, contentName) => {
-    // Kullanıcıya silme işleminden önce bir onay mesajı göster
-    const isConfirmed = window.confirm(`"${contentName}" içeriğini silmek istediğinizden emin misiniz?`);
+    // Kullanıcıya silme işleminden önce bir onay modalı göster
+    confirmAlert({
+      title: 'İçeriği Sil',
+      message: `"${contentName}" içeriğini silmek istediğinizden emin misiniz?`,
+      buttons: [
+        {
+          label: 'Evet',
+          onClick: async () => {
+            try {
+              // İlgili belgenin referansını alma
+              const contentDocRef = doc(db, 'Menu', contentId);
   
-    if (isConfirmed) {
-      try {
-        // İlgili belgenin referansını alma
-        const contentDocRef = doc(db, 'Menu', contentId);
+              // Belgeyi silme işlemi
+              await deleteDoc(contentDocRef);
   
-        // Belgeyi silme işlemi
-        await deleteDoc(contentDocRef);
+              // Verileri tekrar çekme işlemi
+              fetchData();
   
-        // Verileri tekrar çekme işlemi
-        fetchData();
-  
-        toast.success('İçerik başarıyla silindi.');
-      } catch (error) {
-        console.error('İçerik silme hatası:', error);
-        toast.error('İçerik silme işlemi başarısız oldu.');
-      }
-    }
+              toast.success('İçerik başarıyla silindi.');
+            } catch (error) {
+              console.error('İçerik silme hatası:', error);
+              toast.error('İçerik silme işlemi başarısız oldu.');
+            }
+          },
+        },
+        {
+          label: 'Hayır',
+          onClick: () => {
+            // Kullanıcı "Hayır" derse bir şey yapmaya gerek yok
+          },
+        },
+      ],
+    });
   };
 
   const handleAddContent = async () => {
