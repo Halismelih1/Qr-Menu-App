@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
 import { collection, doc, getDocs, query, updateDoc, where, writeBatch,deleteDoc , addDoc} from 'firebase/firestore';
 import { FaEdit,FaTrash  } from 'react-icons/fa';
-
-
-
+import ModalComponentAddCategory from '../ModalComponentAddCategory';
+import ModalComponentEditContent from "../ModalComponentEditContent";
+import ModalComponentAddContent from '../ModalComponentAddContent';
+import ModalComponentEditCategory from '../ModalComponetEditCategory'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,6 +18,12 @@ const Admin = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(auth.currentUser); 
+  const [editModalIsOpen, setEditModalIsOpen] = useState(false);
+  const [editingContent, setEditingContent] = useState(null);
+  const [addCategoryModalIsOpen, setAddCategoryModalIsOpen] = useState(false);
+  const [editCategoryModalIsOpen, setEditCategoryModalIsOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null); 
+
   
 
 
@@ -85,48 +92,47 @@ const Admin = () => {
     }
   };
 
-  const handleAddCategory = async () => {
+  const handleAddCategory = () => {
+    setAddCategoryModalIsOpen(true);
+  };
+
+  const handleModalAddCategorySave = async ({ category, name, price, description }) => {
     try {
-      const categoryName = prompt('Kategori adını girin:');
-      if (!categoryName) {
-        // Kategori adı girilmemişse veya iptal edilmişse işlemi sonlandır
+      if (!category.trim() || !name.trim() || !price.trim()) {
+        console.error('Geçersiz bilgi girişi.');
         return;
       }
-  
-      const lowercaseCategoryName = categoryName.toLowerCase();
-      
-      // Aynı isimde bir kategori var mı kontrolü
-      const categoryExists = categories.map(c => c.toLowerCase()).includes(lowercaseCategoryName);
+
+      const categoryExists = categories.map(c => c.toLowerCase()).includes(category.toLowerCase());
       if (categoryExists) {
         // Aynı isimde bir kategori zaten varsa uyarı ver
         alert('Bu isimde bir kategori zaten var. Başka bir isim seçin.');
         return;
       }
-  
-      // Diğer bilgileri al
-      const name = prompt('İçerik adını girin:');
-      const price = prompt('Fiyatı girin:');
-      const description = prompt('Açıklamayı girin:');
-  
-      // Zorunlu alan kontrolü
-      if (!name || !price) {
-        alert('İçerik adı ve fiyat alanları zorunludur. Kategori eklenemedi.');
-        return;
-      }
-  
-      // Yeni kategoriyi Firestore'a ekleme
-      await addDoc(collection(db, 'Menu'), { category: lowercaseCategoryName, name, price, description });
-  
-      // Kategorileri tekrar çekme işlemi
+
+      // Firestore'a yeni içerik eklemek için addDoc kullanılır
+      await addDoc(collection(db, 'Menu'), {
+        category: category.toLowerCase(),
+        name: name,
+        price: price,
+        description: description,
+      });
+
+      // Verileri tekrar çekme işlemi
       fetchData();
-  
-      toast.success('Kategori başarıyla eklendi.');
+
+      toast.success('İçerik başarıyla eklendi.');
+      setAddCategoryModalIsOpen(false);
     } catch (error) {
-      console.error('Kategori ekleme hatası:', error);
-      toast.error('Kategori ekleme işlemi başarısız oldu.');
+      console.error('İçerik ekleme hatası:', error);
+      toast.error('İçerik ekleme işlemi başarısız oldu.');
     }
   };
 
+  const handleModalAddCategoryClose = () => {
+    setAddCategoryModalIsOpen(false);
+  };
+  
   const handleDeleteCategory = async (category) => {
     // Kullanıcıya silme işleminden önce bir onay mesajı göster
     const isConfirmed = window.confirm(`"${category}" kategorisini silmek istediğinizden emin misiniz?`);
@@ -157,37 +163,52 @@ const Admin = () => {
     }
   };
 
-  const handleEditContent = async (content) => {
+  const handleEditContent = (content) => {
+    setEditingContent(content);
+    setEditModalIsOpen(true);
+  };
+
+  
+  const handleModalEditSave = async ({ id, name, price, description }) => {
     try {
-      const newName = prompt('Yeni ismi girin:', content.name);
-      const newPrice = prompt('Yeni fiyatı girin:', content.price);
-      const newDescription = prompt('Yeni açıklamayı girin:', content.description);
-  
+      if (!id) {
+        console.error('Content ID is undefined.');
+        return;
+      }
       // İlgili belgenin referansını alma
-      const contentDocRef = doc(db, 'Menu', content.id);
-  
+      const contentDocRef = doc(db, 'Menu', id);
+
       // Belgeyi güncelleme işlemi
       const updateData = {
-        name: newName || content.name,
-        price: newPrice || content.price,
+        name,
+        price,
       };
-  
+
       // Eğer yeni açıklama varsa, onu da güncelleme verisine ekleme
-      if (newDescription !== null) {
-        updateData.description = newDescription;
+      if (description !== null) {
+        updateData.description = description;
       }
-  
+
       await updateDoc(contentDocRef, updateData);
-  
+
       // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
-  
+
       toast.success('İçerik başarıyla güncellendi.');
     } catch (error) {
       console.error('İçerik güncelleme hatası:', error);
       toast.error('İçerik güncelleme işlemi başarısız oldu.');
+    } finally {
+      setEditModalIsOpen(false);
+      setEditingContent(null);
     }
   };
+
+  const handleModalEditClose = () => {
+    setEditModalIsOpen(false);
+    setEditingContent(null);
+  };
+
 
   const handleDeleteContent = async (contentId, contentName) => {
     // Kullanıcıya silme işleminden önce bir onay mesajı göster
@@ -219,59 +240,75 @@ const Admin = () => {
         alert('Lütfen bir kategori seçin.');
         return;
       }
-
-      const name = prompt('İçerik adını girin:');
-      const price = prompt('Fiyatı girin:');
-      const description = prompt('Açıklamayı girin (boş bırakabilirsiniz):');
-
-      // Eğer description boş bırakılmışsa, null yerine undefined olarak set edelim
-      const newContent = {
-        category: selectedCategory,
-        name: name || '',
-        price: price || '',
-        description: description !== null ? description : undefined,
-      };
-
-      // Yeni içeriği Firestore'a ekleyelim
-      await addDoc(collection(db, 'Menu'), newContent);
-
-      // Verileri tekrar çekme işlemi
-      fetchData();
-
-      toast.success('İçerik başarıyla eklendi.');
+  
+      setAddContentModalIsOpen(true);
     } catch (error) {
       console.error('İçerik ekleme hatası:', error);
       toast.error('İçerik ekleme işlemi başarısız oldu.');
     }
   };
 
-  const handleEditCategory = async (category) => {
-    const newCategoryName = prompt('Yeni kategori adını girin:', category);
-    if (newCategoryName !== null) {
-      try {
-        // Kategori adını güncelleme işlemi
-        const categoryCollection = collection(db, 'Menu');
-        const categoryQuery = query(categoryCollection, where('category', '==', category));
-        const categorySnapshot = await getDocs(categoryQuery);
-  
-        const batch = writeBatch(db);
-        categorySnapshot.forEach((categoryDoc) => {
-          const docRef = doc(db, 'Menu', categoryDoc.id); 
-          batch.update(docRef, { category: newCategoryName });
-        });
-  
-        await batch.commit();
-  
-        // Kategorileri tekrar çekme işlemi
-        fetchData();
-        toast.success('Kategori başarıyla güncellendi.');
-      } catch (error) {
-        console.error('Kategori güncelleme hatası:', error);
-        toast.error('Kategori güncelleme işlemi başarısız oldu.');
-      }
+  const handleModalAddContentSave = ({ name, price, description }) => {
+    try {
+      // Yeni içeriği Firestore'a ekleyelim
+      addDoc(collection(db, 'Menu'), {
+        category: selectedCategory,
+        name: name || '',
+        price: price || '',
+        description: description || '',
+      });
+
+      // Verileri tekrar çekme işlemi
+      fetchData();
+
+      toast.success('İçerik başarıyla eklendi.');
+      setAddContentModalIsOpen(false);
+    } catch (error) {
+      console.error('İçerik ekleme hatası:', error);
+      toast.error('İçerik ekleme işlemi başarısız oldu.');
     }
   };
 
+  const handleModalAddContentClose = () => {
+    setAddContentModalIsOpen(false);
+  };
+
+  const handleEditCategory = (category) => {
+    setEditCategoryModalIsOpen(true);
+    setEditingCategory(category);
+  };
+
+  const handleModalEditCategorySave = async (newCategoryName) => {
+    try {
+      if (!editingCategory || !newCategoryName) {
+        console.error('Invalid data for category edit.');
+        return;
+      }
+  
+      const categoryCollection = collection(db, 'Menu');
+      const categoryQuery = query(categoryCollection, where('category', '==', editingCategory));
+      const categorySnapshot = await getDocs(categoryQuery);
+  
+      const batch = writeBatch(db);
+      categorySnapshot.forEach((categoryDoc) => {
+        const docRef = doc(db, 'Menu', categoryDoc.id);
+        batch.update(docRef, { category: newCategoryName });
+      });
+  
+      await batch.commit();
+  
+      // Kategorileri tekrar çekme işlemi
+      fetchData();
+  
+      toast.success('Category successfully updated.');
+    } catch (error) {
+      console.error('Category update error:', error);
+      toast.error('Category update failed.');
+    } finally {
+      setEditCategoryModalIsOpen(false);
+      setEditingCategory(null);
+    }
+  };
 
 
   return (
@@ -340,6 +377,31 @@ const Admin = () => {
       >
         Add Category
       </button>
+      <ModalComponentAddContent
+       isOpen={addCategoryModalIsOpen} 
+       onClose={handleModalAddContentClose} 
+       onAdd={handleModalAddContentSave} 
+      />
+
+      <ModalComponentEditCategory
+        isOpen={editCategoryModalIsOpen}
+        onClose={() => setEditCategoryModalIsOpen(false)}
+        onSave={handleModalEditCategorySave}
+        editingCategory={editingCategory}
+      />
+     
+     <ModalComponentAddCategory
+        isOpen={addCategoryModalIsOpen}
+        onClose={handleModalAddCategoryClose}
+        onSave={handleModalAddCategorySave}
+      />
+      <ModalComponentEditContent
+        isOpen={editModalIsOpen}
+        onClose={handleModalEditClose}
+        onSave={handleModalEditSave}
+        content={editingContent}
+      />
+
       <ToastContainer />
     </div>
   );
