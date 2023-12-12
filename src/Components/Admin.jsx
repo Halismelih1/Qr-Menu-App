@@ -342,98 +342,112 @@ const Admin = () => {
 
   return (
     <div className="container mx-auto mt-8 p-4">
-    <header className="flex justify-between items-center mb-8">
-      <div>
-        <h1 className="text-3xl font-bold">Welcome, Admin!</h1>
-         
-          <p className="text-sm text-gray-500 "> Admin E-mail: {user.email} | Admin ID: {user.uid} </p>
-        
-      </div>
+      <header className="flex flex-col md:flex-row justify-between items-center mb-8">
+        <div className="mb-4 md:mb-0">
+          <h1 className="text-3xl font-bold mb-2">Welcome, Admin!</h1>
+          <p className="text-sm text-gray-500">
+            Admin E-mail: {user.email} | Admin ID: {user.uid}
+          </p>
+        </div>
         <button
           onClick={handleSignOut}
-          className="bg-red-500 text-white px-4 py-2 rounded-md mt-4"
+          className="bg-red-500 text-white px-4 py-2 rounded-md"
         >
           Sign Out
         </button>
       </header>
-     
-
-      <div className="flex justify-center space-x-4 mb-8">
-        {categories.map((category) => (
-          <div key={category} className="flex items-center">
-            <button
-              onClick={() => handleCategoryClick(category)}
-              className={`bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 mr-2`}
-            >
-              {category}
-            </button>
-            <FaEdit onClick={() => handleEditCategory(category)} className="cursor-pointer" />
-            <FaTrash onClick={() => handleDeleteCategory(category)} className="cursor-pointer" />
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(Array.isArray(adminData) ? adminData : []).map((item) => (
-          <div key={item.id} className="bg-white p-4 rounded-md shadow-md">
-            <h2 className="text-lg font-semibold mb-2">{item.name}</h2>
-            <p className="text-gray-600">${item.price}</p>
-            {item.description && <p className="text-gray-600 mt-2">{item.description}</p>}
-            <button
-              onClick={handleAddContent}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
-                >
-               Add
-            </button>
-            <button
-              onClick={() => handleEditContent(item)}
-              className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring focus:border-yellow-300 mt-4"
-            >
-              Edit
-            </button>
-            <button
-                onClick={() => handleDeleteContent(item.id, item.name)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
+  
+      <div className="mb-8">
+        <div className="flex flex-wrap justify-center space-x-2 mb-4">
+          {categories.map((category) => (
+            <div key={category} className="flex items-center mb-2">
+              <button
+                onClick={() => handleCategoryClick(category)}
+                className={`bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 mr-2`}
               >
-                Delete
+                {category}
               </button>
-          </div>
-        ))}
+              <FaEdit
+                onClick={() => handleEditCategory(category)}
+                className="cursor-pointer"
+              />
+              <FaTrash
+                onClick={() => handleDeleteCategory(category)}
+                className="cursor-pointer ml-2"
+              />
+            </div>
+          ))}
+        </div>
+  
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(Array.isArray(adminData) ? adminData : []).map((item) => (
+            <div key={item.id} className="bg-white p-4 rounded-md shadow-md mb-4">
+              <h2 className="text-lg font-semibold mb-2">{item.name}</h2>
+              <p className="text-gray-600">${item.price}</p>
+              {item.description && (
+                <p className="text-gray-600 mt-2">{item.description}</p>
+              )}
+              <div className="flex mt-4 space-x-2">
+                <button
+                  onClick={handleAddContent}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => handleEditContent(item)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-yellow-600 focus:outline-none focus:ring focus:border-yellow-300 ml-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteContent(item.id, item.name)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300 ml-2"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+  
       <button
         onClick={handleAddCategory}
-        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300 absolute bottom-4 right-4"
+        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300 mb-4 md:absolute md:bottom-4 md:right-4"
       >
         Add Category
       </button>
+  
       <ModalComponentAddContent
-      isOpen={addContentModalIsOpen} 
-       onClose={handleModalAddContentClose} 
-       onAdd={handleModalAddContentSave} 
+        isOpen={addContentModalIsOpen}
+        onClose={handleModalAddContentClose}
+        onAdd={handleModalAddContentSave}
       />
-
+  
       <ModalComponentEditCategory
         isOpen={editCategoryModalIsOpen}
         onClose={() => setEditCategoryModalIsOpen(false)}
         onSave={handleModalEditCategorySave}
         editingCategory={editingCategory}
       />
-     
-     <ModalComponentAddCategory
+  
+      <ModalComponentAddCategory
         isOpen={addCategoryModalIsOpen}
         onClose={handleModalAddCategoryClose}
         onSave={handleModalAddCategorySave}
       />
+  
       <ModalComponentEditContent
         isOpen={editModalIsOpen}
         onClose={handleModalEditClose}
         onSave={handleModalEditSave}
         content={editingContent}
       />
-
+  
       <ToastContainer />
     </div>
   );
-};
 
+}
 export default Admin;

@@ -52,7 +52,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
           <Button
             type="primary"
-            style={{ marginRight: '10px' }}
+            style={{ background:"green", marginRight: '10px' }}
             onClick={handleAdd}
           >
             Add

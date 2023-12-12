@@ -74,7 +74,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onSave }) => {
 
       <Button
         type="primary"
-        style={{ marginRight: '10px' }}
+        style={{ background:"green", marginRight: '10px' }}
         onClick={handleSave}
       >
         Save

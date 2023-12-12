@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
+import { Modal, Input, Button } from 'antd';
 
 const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   if (!content) {
@@ -41,89 +41,57 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
 
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      style={customStyles}
-      contentLabel="Edit Content Modal"
+      visible={isOpen}
+      onCancel={onClose}
+      title="Edit Content"
+      footer={null}
     >
       <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Edit Content</h2>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ marginBottom: '10px' }}>
         <label style={{ marginBottom: '2px' }}>Name:</label>
-        <input
+        <Input
           type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
       </div>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ marginBottom: '10px' }}>
         <label style={{ marginBottom: '2px' }}>Price:</label>
-        <input
+        <Input
           type="text"
           value={newPrice}
           onChange={(e) => setNewPrice(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
       </div>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ marginBottom: '10px' }}>
         <label style={{ marginBottom: '2px' }}>Description:</label>
-        <input
+        <Input
           type="text"
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button
-          style={{
-            padding: '5px 10px',
-            marginRight: '10px',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#3498db',
-            color: '#fff',
-          }}
+        <Button
+          type="primary"
+          style={{background:"green", marginRight: '10px' }}
           onClick={handleSave}
         >
-          Save
-        </button>
-        <button
-          style={{
-            padding: '5px 10px',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#e74c3c',
-            color: '#fff',
-          }}
+          Güncelle
+        </Button>
+        <Button
+          danger
           onClick={onClose}
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </Modal>
   );
