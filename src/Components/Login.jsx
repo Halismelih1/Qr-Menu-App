@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Form, Input, Button, notification } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 
 const Login = () => {
@@ -28,26 +30,13 @@ const Login = () => {
 
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
+  const handleSubmit = async (values) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  
-      // Kullanıcının oturum açık olup olmadığını kontrol et
-      const user = getAuth().currentUser;
-  
-      if (user) {
-        // Oturum açık ise /admin sayfasına yönlendir
-        navigate('/admin');
-        
-      } else {
-        console.error("Kullanıcı oturum açık değil.");
-      }
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      navigate('/admin');
     } catch (error) {
-      console.error("Giriş hatası:", error);
-      toast.warning("Giriş Bilgilerinizi Kontrol Edin")
-      setError(error.message);
+      console.error('Giriş hatası:', error);
+      toast.warning('Giriş Bilgilerinizi Kontrol Edin');
     }
   };
 
@@ -61,39 +50,26 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-200">
       <div className="bg-white p-8 rounded-md shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Giriş Yap</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              required
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-2 w-full border-b border-gray-300 placeholder-gray-500 focus:outline-none"
-              placeholder="E-posta adresiniz"
-            />
-          </div>
-          <div className="mb-6">
-            <input
-              required
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-2 w-full border-b border-gray-300 placeholder-gray-500 focus:outline-none"
-              placeholder="Şifreniz"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none"
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Giriş Ekranı</h2>
+        <Form name="login-form" onFinish={handleSubmit}>
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: 'Lütfen e-posta adresinizi girin!' }]}
           >
-            Giriş Yap
-          </button>
-        </form>
+            <Input prefix={<UserOutlined />} placeholder="E-posta adresiniz" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'Lütfen şifrenizi girin!' }]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Şifreniz" />
+          </Form.Item>
+          <Form.Item>
+            <Button style={{ backgroundColor: 'white', color: 'black' }} type="primary" htmlType="submit" className="w-full">
+              Giriş Yap
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
       <ToastContainer />
     </div>
