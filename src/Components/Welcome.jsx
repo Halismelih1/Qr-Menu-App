@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Welcome = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-600 to-white flex flex-col items-center bg-no-repeat" >
+    <div className="min-h-screen bg-gradient-to-r from-gray-800 to-white flex flex-col items-center bg-no-repeat" >
       {/* Logo */}
       <div className="mt-32 mb-2">
       <Link to="/login">

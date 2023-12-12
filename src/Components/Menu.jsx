@@ -2,75 +2,156 @@
 import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Menu as AntMenu, Drawer, Button, Row, Col, Card } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+
+
+
+const { SubMenu } = AntMenu;
+
 
 const Menu = ({ categoryItems, categories }) => {
 
   const [filteredItems, setFilteredItems] = useState(categoryItems);
-  const [selectedCategory, setSelectedCategory] = useState('Tümü');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
 
   useEffect(() => {
-    filterItemsByCategory(selectedCategory);
+    filterItemsByCategory(null);
     toast.success('Hoşgeldiniz!', {
-      position: 'bottom-right', // Bildirimin pozisyonu
-      autoClose: 3000, // 3 saniye sonra otomatik kapanma
-      closeOnClick: false, // Tıklanınca kapatma
+      position: 'bottom-right', 
+      autoClose: 3000, 
+      closeOnClick: false, 
     });
   }, []);
 
   const filterItemsByCategory = (category) => {
     if (category === selectedCategory) {
-      // Eğer aynı kategoriye tekrar tıklanırsa, içeriği kapat
-      setSelectedCategory('Tümü');
-      setFilteredItems([]);
+      setSelectedCategory(null);
+      setFilteredItems(categoryItems);
     } else {
-      // Diğer durumda, seçilen kategoriye göre filtrele
-      const filtered = categoryItems.filter((item) => item.category === category);
+      const filtered = category
+        ? categoryItems.filter((item) => item.category === category)
+        : categoryItems;
       setSelectedCategory(category);
       setFilteredItems(filtered);
     }
   };
 
+  const showDrawer = () => {
+    setDrawerOpen(true);
+  };
+
+  const onClose = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleCategoryClick = (category) => {
+    filterItemsByCategory(category);
+    onClose();
+  };
 
 
+  
   return (
-    <div className="min-h-screen flex flex-col items-center c text-white">
-      {/* Kategori filtreleme düğmeleri */}
-      {categories.length > 0 && (
-        <div className="flex flex-wrap justify-center mt-4">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className="p-4 m-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
-              onClick={() => filterItemsByCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen bg-cream text-gray-800 p-4">
+      <Row justify="center" align="middle" gutter={[16, 16]}>
+        <Col span={24}>
+        <h1 className="text-xl font-bold mb-4">
+  Lezzetin Tadını Çıkartın
+  {selectedCategory ? <span className="block text-lg">{selectedCategory}</span> : ''}
+</h1>
+        </Col>
 
-      {/* Filtrelenmiş menü içeriği */}
-      {filteredItems.length > 0 ? (
-        <div className="flex flex-col items-center mt-8 w-full">
-          {filteredItems.map((item) => (
-            <div key={item.id} className="mb-4 p-4 bg-white rounded-md shadow-md w-64">
-              <p className="text-xl font-semibold text-gray-800">{item.name}</p>
-              <p className="text-gray-400">Fiyat: ${item.price}</p>
-              {/* Eğer description mevcutsa göster */}
-              {item.description && (
-                <p className="text-gray-400">Açıklama: {item.description}</p>
-              )}
-              {/* Eğer picture mevcutsa göster */}
-              {item.picture && (
-                <img src={item.picture} alt={item.name} className="w-full h-32 object-cover mt-2" />
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-white mt-8">Bu kategoride menü bulunmamaktadır.</p>
-      )}
-      <ToastContainer/>
+        <Col span={24}>
+          <Button
+            type="primary"
+            onClick={showDrawer}
+            className="mb-4 menu-button"
+            style={{ backgroundColor: '#3498db', borderColor: '#3498db' }}
+            icon={<MenuOutlined />}
+          >
+            Kategoriler
+          </Button>
+        </Col>
+
+        <Drawer
+          title="Menü"
+          placement="left"
+          closable={false}
+          onClose={onClose}
+          visible={drawerOpen}
+        >
+          <AntMenu
+            mode="vertical"
+            defaultSelectedKeys={[]}
+            selectedKeys={selectedCategory ? [selectedCategory] : []}
+            style={{ width: '100%' }}
+          >
+            {categories.map((category) => (
+              <AntMenu.Item key={category} onClick={() => handleCategoryClick(category)}>
+                {category}
+              </AntMenu.Item>
+            ))}
+          </AntMenu>
+        </Drawer>
+
+        {filteredItems.length > 0 ? (
+          <Col span={24}>
+            <Row gutter={[16, 16]}>
+              {filteredItems.map((item) => (
+                <Col key={item.id} xs={24} sm={12} md={12} lg={12}>
+                  <Card
+                    hoverable
+                    style={{
+                      width: '100%',
+                      height: '100%', // Kartın sabit yüksekliği
+                      borderRadius: '10px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid #ddd',
+                    }}                  >
+                    <Row gutter={16}>
+                      {item.picture && (
+                        <Col xs={24} sm={12} md={12} lg={12}>
+                          <img
+                            alt={item.name}
+                            src={item.picture}
+                            style={{
+                              width: '100%',
+                              borderRadius: '10px',
+                              borderTopLeftRadius: '10px',
+                              borderTopRightRadius: '10px',
+                            }}
+                          />
+                        </Col>
+                      )}
+                      <Col xs={24} sm={12} md={12} lg={12}>
+                        <div style={{ padding: '16px' }}>
+                          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                            {item.name}
+                          </h3>
+                          <p style={{ color: '#3498db', fontWeight: 'bold', marginBottom: '8px' }}>
+                            Fiyat: ${item.price}
+                          </p>
+                          {item.description && (
+                            <p className="text-gray-600 mb-2">
+  {item.description && item.description.length > 100
+    ? `${item.description.substring(0, 100)}...` // İstediğiniz karakter sayısını ayarlayın
+    : item.description}
+</p>                          )}
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Col>
+        ) : (
+          null
+        )}
+      </Row>
     </div>
   );
 };

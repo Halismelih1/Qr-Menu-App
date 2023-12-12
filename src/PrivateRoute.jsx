@@ -12,7 +12,7 @@ function PrivateRoute({ element }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      toast.info('Oturum durumu değişti!', {
+      toast.info('Giriş Yapmalısınız!', {
         position: 'bottom-right', // Bildirimin pozisyonu
         autoClose: 3000, // 3 saniye sonra otomatik kapanma
         closeOnClick: false, // Tıklanınca kapatma

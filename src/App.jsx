@@ -29,9 +29,9 @@ const App = () => {
     { idField: 'id' }
   );
 
-  useEffect(()=>{
-    navigate("/")
-  },[])
+  // useEffect(()=>{
+  //   navigate("/")
+  // },[])
 
   useEffect(() => {
     if (categoriesData) {
