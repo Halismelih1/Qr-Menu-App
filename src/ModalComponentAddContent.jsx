@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
+import { Modal, Input, Button } from 'antd';
+
 
 const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
   const [name, setName] = useState('');
@@ -19,105 +20,50 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
 
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          width: '60%', // Modal genişliği
-          padding: '20px', // İçerik iç boşluğu
-          borderRadius: '8px', // Köşe yuvarlaklığı
-          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Gölge
-        },
-        overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.8)', // Arkaplanı bulanık yapar
-        },
-      }}
-      contentLabel="Add Content Modal"
+      visible={isOpen}
+      onCancel={onClose}
+      centered
+      footer={null}
     >
-      <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Add Content</h2>
+      <div style={{ textAlign: 'center' }}>
+        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Add Content</h2>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label style={{ marginBottom: '2px' }}>Name:</label>
-        <input
-          type="text"
+        <Input
+          placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
-      </div>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label style={{ marginBottom: '2px' }}>Price:</label>
-        <input
-          type="text"
+        <Input
+          placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
-      </div>
 
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label style={{ marginBottom: '2px' }}>Description:</label>
-        <input
-          type="text"
+        <Input
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
+          style={{ marginBottom: '10px' }}
         />
-      </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button
-          style={{
-            padding: '5px 10px',
-            marginRight: '10px',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#3498db',
-            color: '#fff',
-          }}
-          onClick={handleAdd}
-        >
-          Add
-        </button>
-        <button
-          style={{
-            padding: '5px 10px',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#e74c3c',
-            color: '#fff',
-          }}
-          onClick={onClose}
-        >
-          Cancel
-        </button>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          <Button
+            type="primary"
+            style={{ marginRight: '10px' }}
+            onClick={handleAdd}
+          >
+            Add
+          </Button>
+          <Button
+            danger
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
     </Modal>
   );

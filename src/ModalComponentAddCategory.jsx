@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
+import { Modal, Input, Button } from 'antd';
 
 const ModalComponentAddContent = ({ isOpen, onClose, onSave }) => {
   const [categoryName, setCategoryName] = useState('');
@@ -29,122 +29,63 @@ const ModalComponentAddContent = ({ isOpen, onClose, onSave }) => {
     onClose();
   };
 
-
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '60%', // Modal genişliği
-      padding: '20px', // İçerik iç boşluğu
-      borderRadius: '8px', // Köşe yuvarlaklığı
-      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Gölge
-    },
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)', // Arkaplanı bulanık yapar
-    },
-  };
-
   return (
     <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      contentLabel="Add Content Modal"
-      style={customStyles}
+      visible={isOpen}
+      onCancel={onClose}
+      title="Add Content"
+      footer={null}
     >
-      <h2>Add Content</h2>
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ marginBottom: '10px' }}>
         <label>Category Name:</label>
-        <input
-          type="text"
+        <Input
           value={categoryName}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
           onChange={(e) => setCategoryName(e.target.value)}
-        />
-      </div>
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label>Name:</label>
-        <input
-          type="text"
-          value={name}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label>Price:</label>
-        <input
-          type="text"
-          value={price}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-      </div>
-      <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column' }}>
-        <label>Description:</label>
-        <input
-          type="text"
-          value={description}
-          style={{
-            padding: '5px',
-            borderRadius: '10px',
-            border: '2px solid #3498db',
-            marginBottom: '10px',
-            outline: 'none',
-          }}
-          onChange={(e) => setDescription(e.target.value)}
+          style={{ marginBottom: '10px' }}
         />
       </div>
 
-      <button
-        style={{
-          padding: '5px 10px',
-          marginRight: '10px',
-          cursor: 'pointer',
-          borderRadius: '5px',
-          border: 'none',
-          backgroundColor: '#3498db',
-          color: '#fff',
-        }}
+      <div style={{ marginBottom: '10px' }}>
+        <label>Name:</label>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={{ marginBottom: '10px' }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '10px' }}>
+        <label>Price:</label>
+        <Input
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          style={{ marginBottom: '10px' }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '10px' }}>
+        <label>Description:</label>
+        <Input
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          style={{ marginBottom: '10px' }}
+        />
+      </div>
+
+      <Button
+        type="primary"
+        style={{ marginRight: '10px' }}
         onClick={handleSave}
       >
         Save
-      </button>
+      </Button>
 
-      <button
-        style={{
-          padding: '5px 10px',
-          cursor: 'pointer',
-          borderRadius: '5px',
-          border: 'none',
-          backgroundColor: '#e74c3c',
-          color: '#fff',
-        }}
+      <Button
+        danger
         onClick={onClose}
       >
         Close
-      </button>
+      </Button>
     </Modal>
   );
 };
