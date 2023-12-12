@@ -76,11 +76,11 @@ const App = () => {
   return (
     
       <Routes>
-        <Route path='/' element={<Welcome />} />
-        <Route path='/menu' element={<Menu categories={categories} categoryItems={categoryItems} />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='https://degirmencafemenu.netlify.app/' element={<Welcome />} />
+        <Route path='https://degirmencafemenu.netlify.app/menu' element={<Menu categories={categories} categoryItems={categoryItems} />} />
+        <Route path='https://degirmencafemenu.netlify.app/login' element={<Login />} />
         <Route
-          path="/admin"
+          path="https://degirmencafemenu.netlify.app/admin"
           element={
             <PrivateRoute
               element={<Admin />}
