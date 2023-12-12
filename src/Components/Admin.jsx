@@ -12,6 +12,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
+import { Button, Card, Space, Modal,Typography } from 'antd';
+import { LogoutOutlined, FileAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+
+const { Text } = Typography;
+
 
 const Admin = () => {
 
@@ -344,40 +349,59 @@ const Admin = () => {
     <div className="container mx-auto mt-8 p-4">
       <header className="flex flex-col md:flex-row justify-between items-center mb-8">
         <div className="mb-4 md:mb-0">
-          <h1 className="text-3xl font-bold mb-2">Welcome, Admin!</h1>
-          <p className="text-sm text-gray-500">
-            Admin E-mail: {user.email} | Admin ID: {user.uid}
-          </p>
+          <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left">
+            Welcome, {user.email}!
+          </h1>
         </div>
-        <button
+        <Button
+        onClick={handleAddCategory}
+        style={{
+          color: 'green',
+          fontWeight: 'bold',
+          marginBottom:'4px'
+        }}
+        icon={<FileAddOutlined />}
+      >
+        Add Category
+      </Button>
+        <Button
+          icon={<LogoutOutlined />}
           onClick={handleSignOut}
-          className="bg-red-500 text-white px-4 py-2 rounded-md"
+          style={{ color: '#FF0000', fontWeight: 'bold' }}
         >
-          Sign Out
-        </button>
+          Çıkış Yap
+        </Button>
       </header>
-  
-      <div className="mb-8">
-        <div className="flex flex-wrap justify-center space-x-2 mb-4">
-          {categories.map((category) => (
-            <div key={category} className="flex items-center mb-2">
-              <button
-                onClick={() => handleCategoryClick(category)}
-                className={`bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 mr-2`}
-              >
-                {category}
-              </button>
-              <FaEdit
-                onClick={() => handleEditCategory(category)}
-                className="cursor-pointer"
-              />
-              <FaTrash
-                onClick={() => handleDeleteCategory(category)}
-                className="cursor-pointer ml-2"
-              />
-            </div>
-          ))}
+      <div className="mb-8 flex">
+  <div className="flex flex-col mb-4 mr-4">
+    {categories.map((category) => (
+      <div key={category} className="flex items-center mb-2">
+        <Button
+          type="primary"
+          onClick={() => handleCategoryClick(category)}
+          style={{
+            width: '120px',
+            height: '40px',
+            backgroundColor: '#1890ff',
+            borderColor: '#1890ff',
+            marginRight: '8px',
+          }}
+        >
+          {category}
+        </Button>
+        <div className="ml-auto">
+          <EditOutlined
+            onClick={() => handleEditCategory(category)}
+            className="cursor-pointer text-blue-500 ml-2"
+          />
+          <DeleteOutlined
+            onClick={() => handleDeleteCategory(category)}
+            className="cursor-pointer text-red-500 ml-2"
+          />
         </div>
+      </div>
+    ))}
+  </div>
   
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {(Array.isArray(adminData) ? adminData : []).map((item) => (
@@ -388,36 +412,32 @@ const Admin = () => {
                 <p className="text-gray-600 mt-2">{item.description}</p>
               )}
               <div className="flex mt-4 space-x-2">
-                <button
+                <span
                   onClick={handleAddContent}
-                  className="bg-green-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
+                  className="text-green-900 cursor-pointer font-bold"
                 >
                   Add
-                </button>
-                <button
+                </span>
+                <span
                   onClick={() => handleEditContent(item)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-yellow-600 focus:outline-none focus:ring focus:border-yellow-300 ml-2"
+                  className=" text-blue-700 cursor-pointer font-bold"
                 >
                   Edit
-                </button>
-                <button
+                </span>
+                <span
                   onClick={() => handleDeleteContent(item.id, item.name)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md flex-grow hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300 ml-2"
+                  className="text-red-500 cursor-pointer font-bold"
                 >
                   Delete
-                </button>
+                </span>
               </div>
             </div>
           ))}
         </div>
       </div>
   
-      <button
-        onClick={handleAddCategory}
-        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300 mb-4 md:absolute md:bottom-4 md:right-4"
-      >
-        Add Category
-      </button>
+     
+  
   
       <ModalComponentAddContent
         isOpen={addContentModalIsOpen}

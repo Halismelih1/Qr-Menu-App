@@ -33,7 +33,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onSave }) => {
     <Modal
       visible={isOpen}
       onCancel={onClose}
-      title="Add Content"
+      title="Add Category"
       footer={null}
     >
       <div style={{ marginBottom: '10px' }}>
