@@ -12,28 +12,28 @@ const { SubMenu } = AntMenu;
 
 const Menu = ({ categoryItems, categories }) => {
 
-  const [filteredItems, setFilteredItems] = useState(categoryItems);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
 
   useEffect(() => {
-    filterItemsByCategory(null);
+    setFilteredItems([]);
     toast.success('Hoşgeldiniz!', {
-      position: 'bottom-right', 
-      autoClose: 3000, 
-      closeOnClick: false, 
+      position: 'bottom-right',
+      autoClose: 3000,
+      closeOnClick: false,
     });
   }, []);
 
   const filterItemsByCategory = (category) => {
     if (category === selectedCategory) {
       setSelectedCategory(null);
-      setFilteredItems(categoryItems);
+      setFilteredItems([]);
     } else {
       const filtered = category
         ? categoryItems.filter((item) => item.category === category)
-        : categoryItems;
+        : [];
       setSelectedCategory(category);
       setFilteredItems(filtered);
     }
@@ -58,10 +58,14 @@ const Menu = ({ categoryItems, categories }) => {
     <div className="min-h-screen bg-cream text-gray-800 p-4">
       <Row justify="center" align="middle" gutter={[16, 16]}>
         <Col span={24}>
-        <h1 className="text-xl font-bold mb-4">
-  Lezzetin Tadını Çıkartın
-  {selectedCategory ? <span className="block text-lg">{selectedCategory}</span> : ''}
-</h1>
+          <h1 className="text-xl font-bold mb-4">
+            Lezzetin Tadını Çıkartın
+            {selectedCategory ? (
+              <span className="block text-lg">{selectedCategory}</span>
+            ) : (
+              ''
+            )}
+          </h1>
         </Col>
 
         <Col span={24}>
@@ -90,7 +94,10 @@ const Menu = ({ categoryItems, categories }) => {
             style={{ width: '100%' }}
           >
             {categories.map((category) => (
-              <AntMenu.Item key={category} onClick={() => handleCategoryClick(category)}>
+              <AntMenu.Item
+                key={category}
+                onClick={() => handleCategoryClick(category)}
+              >
                 {category}
               </AntMenu.Item>
             ))}
@@ -110,7 +117,8 @@ const Menu = ({ categoryItems, categories }) => {
                       borderRadius: '10px',
                       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                       border: '1px solid #ddd',
-                    }}                  >
+                    }}
+                  >
                     <Row gutter={16}>
                       {item.picture && (
                         <Col xs={24} sm={12} md={12} lg={12}>
@@ -128,18 +136,31 @@ const Menu = ({ categoryItems, categories }) => {
                       )}
                       <Col xs={24} sm={12} md={12} lg={12}>
                         <div style={{ padding: '16px' }}>
-                          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                          <h3
+                            style={{
+                              fontSize: '1.2rem',
+                              fontWeight: 'bold',
+                              marginBottom: '8px',
+                            }}
+                          >
                             {item.name}
                           </h3>
-                          <p style={{ color: '#3498db', fontWeight: 'bold', marginBottom: '8px' }}>
+                          <p
+                            style={{
+                              color: '#3498db',
+                              fontWeight: 'bold',
+                              marginBottom: '8px',
+                            }}
+                          >
                             Fiyat: ${item.price}
                           </p>
                           {item.description && (
                             <p className="text-gray-600 mb-2">
-  {item.description && item.description.length > 100
-    ? `${item.description.substring(0, 100)}...` // İstediğiniz karakter sayısını ayarlayın
-    : item.description}
-</p>                          )}
+                              {item.description && item.description.length > 100
+                                ? `${item.description.substring(0, 100)}...`
+                                : item.description}
+                            </p>
+                          )}
                         </div>
                       </Col>
                     </Row>
@@ -148,9 +169,7 @@ const Menu = ({ categoryItems, categories }) => {
               ))}
             </Row>
           </Col>
-        ) : (
-          null
-        )}
+        ) : null}
       </Row>
     </div>
   );
