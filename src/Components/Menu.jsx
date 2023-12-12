@@ -59,7 +59,7 @@ const Menu = ({ categoryItems, categories }) => {
       <Row justify="center" align="middle" gutter={[16, 16]}>
         <Col span={24}>
           <h1 className="text-xl font-bold mb-4">
-            Lezzetin Tadını Çıkartın
+            Lezzetin Tadını Çıkartın..
             {selectedCategory ? (
               <span className="block text-lg">{selectedCategory}</span>
             ) : (
