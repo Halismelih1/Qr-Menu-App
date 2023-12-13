@@ -105,7 +105,7 @@ const Admin = () => {
     setAddCategoryModalIsOpen(true);
   };
 
-  const handleModalAddCategorySave = async ({ category, name, price, description }) => {
+  const handleModalAddCategorySave = async ({ category, name, price, description,picture }) => {
     try {
       if (!category.trim() || !name.trim() || !price.trim()) {
         console.error('Geçersiz bilgi girişi.');
@@ -125,6 +125,7 @@ const Admin = () => {
         name: name,
         price: price,
         description: description,
+        picture:picture
       });
 
       // Verileri tekrar çekme işlemi
@@ -191,31 +192,37 @@ const Admin = () => {
   };
 
   
-  const handleModalEditSave = async ({ id, name, price, description }) => {
+  const handleModalEditSave = async ({ id, name, price, description, picture }) => {
     try {
       if (!id) {
         console.error('Content ID is undefined.');
         return;
       }
+  
       // İlgili belgenin referansını alma
       const contentDocRef = doc(db, 'Menu', id);
-
+  
       // Belgeyi güncelleme işlemi
       const updateData = {
         name,
         price,
       };
-
+  
       // Eğer yeni açıklama varsa, onu da güncelleme verisine ekleme
       if (description !== null) {
         updateData.description = description;
       }
-
+  
+      // Eğer yeni picture varsa, onu da güncelleme verisine ekleme
+      if (picture !== null) {
+        updateData.picture = picture;
+      }
+  
       await updateDoc(contentDocRef, updateData);
-
+  
       // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
-
+  
       toast.success('İçerik başarıyla güncellendi.');
     } catch (error) {
       console.error('İçerik güncelleme hatası:', error);
@@ -282,7 +289,7 @@ const Admin = () => {
     }
   };
 
-  const handleModalAddContentSave = ({ name, price, description }) => {
+  const handleModalAddContentSave = ({ name, price, description, picture }) => {
     try {
       // Yeni içeriği Firestore'a ekleyelim
       addDoc(collection(db, 'Menu'), {
@@ -290,11 +297,12 @@ const Admin = () => {
         name: name || '',
         price: price || '',
         description: description || '',
+        picture: picture || '',  // Eklenen "picture" parametresi
       });
-
+  
       // Verileri tekrar çekme işlemi
       fetchData();
-
+  
       toast.success('İçerik başarıyla eklendi.');
       setAddContentModalIsOpen(false);
     } catch (error) {
@@ -343,6 +351,7 @@ const Admin = () => {
       setEditingCategory(null);
     }
   };
+
 
 
   return (
@@ -406,7 +415,7 @@ const Admin = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {(Array.isArray(adminData) ? adminData : []).map((item) => (
             <div key={item.id} className="bg-white p-4 rounded-md shadow-md mb-4">
-              <h2 className="text-lg font-semibold mb-2">{item.name}</h2>
+              <h2 className="text-lg font-semibold mb-2">{item.name}</h2> <hr />
               <p className="text-gray-600">${item.price}</p>
               {item.description && (
                 <p className="text-gray-600 mt-2">{item.description}</p>

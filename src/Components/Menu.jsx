@@ -105,35 +105,39 @@ const Menu = ({ categoryItems, categories }) => {
         </Drawer>
 
         {filteredItems.length > 0 ? (
-          <Col span={24}>
-            <Row gutter={[16, 16]}>
-              {filteredItems.map((item) => (
-                <Col key={item.id} xs={24} sm={12} md={12} lg={12}>
-                  <Card
-                    hoverable
-                    style={{
-                      width: '100%',
-                      height: '100%', // Kartın sabit yüksekliği
-                      borderRadius: '10px',
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid #ddd',
-                    }}
-                  >
-                    <Row gutter={16}>
-                      {item.picture && (
-                        <Col xs={24} sm={12} md={12} lg={12}>
-                          <img
-                            alt={item.name}
-                            src={item.picture}
-                            style={{
-                              width: '100%',
-                              borderRadius: '10px',
-                              borderTopLeftRadius: '10px',
-                              borderTopRightRadius: '10px',
-                            }}
-                          />
-                        </Col>
-                      )}
+        <Col span={24}>
+          <Row gutter={[16, 16]}>
+            {filteredItems.map((item) => (
+              <Col key={item.id} xs={24} sm={12} md={12} lg={12}>
+                <Card
+                  hoverable
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid #ddd',
+                  }}
+                >
+                  <Row gutter={16}>
+                    {item.picture && (
+                      <Col xs={24} sm={12} md={12} lg={12}>
+                        <img
+                          alt={item.name}
+                          src={item.picture}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            objectFit: 'cover',
+                            borderRadius: '10px',
+                            borderTopLeftRadius: '10px',
+                            borderTopRightRadius: '10px',
+                          }}
+                        />
+                        {/* Resim URL'sini kontrol etmek için console.log ekleyin */}
+                        {console.log('Item Picture URL:', item.picture)}
+                      </Col>
+                    )}
                       <Col xs={24} sm={12} md={12} lg={12}>
                         <div style={{ padding: '16px' }}>
                           <h3
@@ -141,9 +145,11 @@ const Menu = ({ categoryItems, categories }) => {
                               fontSize: '1.2rem',
                               fontWeight: 'bold',
                               marginBottom: '8px',
+                              
                             }}
                           >
                             {item.name}
+                            <hr />
                           </h3>
                           <p
                             style={{
@@ -176,3 +182,13 @@ const Menu = ({ categoryItems, categories }) => {
 };
 
 export default Menu;
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Input, Button } from 'antd';
+import { Modal, Input, Button,Upload, message } from 'antd';
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { storage } from './firebaseConfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
 
 const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   if (!content) {
@@ -10,6 +15,8 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [newName, setNewName] = useState(content.name || '');
   const [newPrice, setNewPrice] = useState(content.price || '');
   const [newDescription, setNewDescription] = useState(content.description || '');
+  const [newPicture, setNewPicture] = useState(content.picture || ''); 
+
 
   const handleSave = () => {
     onSave({
@@ -17,27 +24,46 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       name: newName,
       price: newPrice,
       description: newDescription,
+      picture: newPicture,
     });
     onClose();
   };
 
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '60%', // Modal genişliği
-      padding: '20px', // İçerik iç boşluğu
-      borderRadius: '8px', // Köşe yuvarlaklığı
-      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Gölge
-    },
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)', // Arkaplanı bulanık yapar
-    },
+  const handleRemovePicture = () => {
+    setNewPicture(''); // Picture'ı sıfırla
   };
+
+  const uploadProps = {
+    customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
+    showUploadList: false, // Dosya listesini gizle
+  };
+
+  const handleImageUpload = async (file, onSuccess) => {
+    if (!file) {
+      console.error('Dosya bilgisi bulunamadı.');
+      onSuccess(new Error('Dosya bilgisi bulunamadı.'));
+      return;
+    }
+
+    try {
+      // Storage referansı oluşturun, ancak dosyayı yükleme işlemi için "uploadBytes" kullanmayın
+      const storageRef = ref(storage, `images/${file.name}`);
+
+      // Doğrudan download URL alın
+      const downloadURL = await getDownloadURL(storageRef);
+
+      onSuccess(); // Başarılı yükleme olduğunu belirtin
+
+      // downloadURL'yi kullanın (örneğin, state'e kaydedin veya üst düzey bileşene gönderin)
+      setNewPicture(downloadURL);
+    } catch (error) {
+      console.error('File upload error:', error);
+      onSuccess(error); // Yükleme hatası olduğunu belirtin
+      alert('Dosya yükleme hatası: ' + error.message);
+    }
+  };
+
+
 
   return (
     <Modal
@@ -47,6 +73,29 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       footer={null}
     >
       <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Edit Content</h2>
+
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginBottom: '2px' }}>Picture:</label>
+        {newPicture && (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img
+              src={newPicture}
+              alt="Content"
+              style={{ maxWidth: '100px', marginRight: '10px' }}
+            />
+            <Button
+              type="danger"
+              icon={<DeleteOutlined />}
+              onClick={handleRemovePicture}
+            >
+              Remove Picture
+            </Button>
+          </div>
+        )}
+        <Upload {...uploadProps}>
+          <Button icon={<UploadOutlined />}>Select File</Button>
+        </Upload>
+      </div>
 
       <div style={{ marginBottom: '10px' }}>
         <label style={{ marginBottom: '2px' }}>Name:</label>
