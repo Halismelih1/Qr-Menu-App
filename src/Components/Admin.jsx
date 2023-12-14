@@ -266,6 +266,7 @@ const Admin = () => {
   
               // Verileri tekrar çekme işlemi
               fetchData();
+
   
               toast.success('İçerik başarıyla silindi.');
             } catch (error) {
@@ -426,12 +427,13 @@ const Admin = () => {
   </div>
 ))}
   </div>
+  <hr />
   
   <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(Array.isArray(adminData) ? adminData : []).map((item) => (
           <Card
             key={item.id}
-            style={{ width: '100%' }}
+            style={{ width: '100%',border: '1px solid black' }}
             cover={
               item.picture ? (
                 <img
@@ -444,7 +446,7 @@ const Admin = () => {
                   }}
                 />
               ) : (
-                <div className="no-image-placeholder">
+                <div className="text-center mt-4">
                   Bu ürün için eklenmiş bir resim bulunmamaktadır.
                 </div>
               )
@@ -453,18 +455,22 @@ const Admin = () => {
               <EditOutlined
                 key="edit"
                 onClick={() => handleEditContent(item)}
+                style={{ color: 'blue' }}
+
               />,
               <DeleteOutlined
                 key="delete"
                 onClick={() => handleDeleteContent(item.id, item.name)}
+                style={{ color: 'red' }}
+
               />,
             ]}
           >
             <Meta
               title={<span>{item.name}</span>}
-              description={<span>Açıklama: {item.description || 'Bu ürün için bir açıklama bulunamadı.'}</span>}
+              description={<p className='mb-2'> <span className='font-bold'>Açıklama:</span>{item.description || 'Bu ürün için bir açıklama bulunamadı.'}</p>}
             />
-            <p>Fiyat: &#8378;{item.price}</p>
+            <p>Fiyat: {item.price}&#8378;</p>
           </Card>
         ))}
       </div>

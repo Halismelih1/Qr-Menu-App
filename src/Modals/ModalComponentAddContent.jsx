@@ -110,8 +110,8 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       footer={null}
     >
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>
-          Add Content to {selectedCategory}
+        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px', marginTop:'20px' }}>
+          Ekle | "{selectedCategory}"
         </h2>
 
         <Upload
@@ -119,7 +119,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
       onChange={handleChange}  
       >
-      <Button icon={<UploadOutlined />}>Select File</Button>
+      <Button style={{marginBottom:"10px"}} icon={<UploadOutlined />}>Select File</Button>
       </Upload>
 
         <Input

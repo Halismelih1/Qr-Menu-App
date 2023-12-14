@@ -63,10 +63,12 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       
       // Doğrudan download URL alma
       const downloadURL = await getDownloadURL(storageRef);
+
+      console.log('File download URL:', downloadURL);
+
   
       onSuccess(); // Başarılı yükleme durumu
   
-      console.log('File download URL:', downloadURL);
     } catch (error) {
       console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
@@ -89,6 +91,16 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
           onChange={(e) => setCategoryName(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
+      </div>
+
+      <div style={{ marginBottom: '10px' }}>
+        <label className='mr-2'>Picture:</label>
+        <Upload
+          {...uploadProps}
+          customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
+        >
+          <Button icon={<UploadOutlined />}>Select File</Button>
+        </Upload>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
@@ -118,19 +130,10 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
         />
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <label>Picture:</label>
-        <Upload
-          {...uploadProps}
-          customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
-        >
-          <Button icon={<UploadOutlined />}>Select File</Button>
-        </Upload>
-      </div>
-
+      <div style={{ marginBottom: '10px', textAlign: 'center' }}>
       <Button
         type="primary"
-        style={{ background:"green", marginRight: '10px' }}
+        style={{ background: 'green', marginRight: '10px' }}
         onClick={handleSave}
       >
         Save
@@ -142,8 +145,9 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       >
         Close
       </Button>
-    </Modal>
-  );
+    </div>
+  </Modal>
+);
 };
 
 export default ModalComponentAddCategory;
