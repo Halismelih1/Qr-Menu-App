@@ -134,8 +134,6 @@ const Menu = ({ categoryItems, categories }) => {
                             borderTopRightRadius: '10px',
                           }}
                         />
-                        {/* Resim URL'sini kontrol etmek için console.log ekleyin */}
-                        {console.log('Item Picture URL:', item.picture)}
                       </Col>
                     )}
                       <Col xs={24} sm={12} md={12} lg={12}>

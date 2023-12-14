@@ -6,7 +6,7 @@ import Menu from './Components/Menu';
 import Login from './Components/Login';
 import Admin from './Components/Admin';
 import PrivateRoute from './PrivateRoute';
-import { BrowserRouter as Router, Route, Routes,useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { getFirestore, collection, query, where } from 'firebase/firestore';
 
 
@@ -14,24 +14,19 @@ const firestore = getFirestore(app);
 const menuRef = collection(firestore, 'Menu');
 
 const App = () => {
+  
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryItems, setCategoryItems] = useState([]);
-  const [currentView, setCurrentView] = useState('welcome');
-  const [isAdminClicked, setIsAdminClicked] = useState(false);
-
-  const navigate =useNavigate();
+ 
 
 
-  // useCollectionData hook'u ile kategorileri çekme
+
+  // kategorileri çekme
   const [categoriesData, loadingCategories, errorCategories] = useCollectionData(
     menuRef,
     { idField: 'id' }
   );
-
-  // useEffect(()=>{
-  //   navigate("/")
-  // },[])
 
   useEffect(() => {
     if (categoriesData) {
@@ -41,7 +36,7 @@ const App = () => {
     }
   }, [categoriesData]);
 
-  // useCollectionData hook'u ile veriyi çekme
+  // veriyi çekme işlemi
   const [data, loadingData, errorData] = useCollectionData(
     selectedCategory
       ? query(menuRef, where('category', '==', selectedCategory))
@@ -61,18 +56,8 @@ const App = () => {
     }
   }, [errorCategories, errorData]);
 
-  const handleAdminClick = () => {
-    setIsAdminClicked(true);
-    setCurrentView('login');
-  };
-
-  const handleMenuButtonClick = () => {
-    setCurrentView('menu');
-  };
-
-
-
  
+
   return (
     
       <Routes>

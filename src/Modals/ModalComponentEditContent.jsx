@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Input, Button,Upload, message } from 'antd';
+import { Modal, Input, Button,Upload } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { storage } from './firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebaseConfig';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 
 
@@ -46,19 +46,19 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     }
 
     try {
-      // Storage referansı oluşturun, ancak dosyayı yükleme işlemi için "uploadBytes" kullanmayın
+    
       const storageRef = ref(storage, `images/${file.name}`);
 
       // Doğrudan download URL alın
       const downloadURL = await getDownloadURL(storageRef);
 
-      onSuccess(); // Başarılı yükleme olduğunu belirtin
+      onSuccess(); // Başarılı yükleme durumu
 
-      // downloadURL'yi kullanın (örneğin, state'e kaydedin veya üst düzey bileşene gönderin)
+    
       setNewPicture(downloadURL);
     } catch (error) {
       console.error('File upload error:', error);
-      onSuccess(error); // Yükleme hatası olduğunu belirtin
+      onSuccess(error); // Yükleme hatası durumu
       alert('Dosya yükleme hatası: ' + error.message);
     }
   };

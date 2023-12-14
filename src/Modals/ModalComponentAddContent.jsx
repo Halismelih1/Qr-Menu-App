@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { storage } from './firebaseConfig';
+import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
@@ -100,6 +100,8 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
     }
   };
 
+
+
   return (
     <Modal
       visible={isOpen}
@@ -111,12 +113,12 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
         <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Add Content</h2>
 
         <Upload
-  {...uploadProps}
-  customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
-  onChange={handleChange}  // Burada handleChange fonksiyonunu ekleyin
->
-  <Button icon={<UploadOutlined />}>Select File</Button>
-</Upload>
+      {...uploadProps}
+      customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
+      onChange={handleChange}  
+      >
+      <Button icon={<UploadOutlined />}>Select File</Button>
+      </Upload>
 
         <Input
           placeholder="Name"

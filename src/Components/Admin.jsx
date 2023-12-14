@@ -3,11 +3,10 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
 import { collection, doc, getDocs, query, updateDoc, where, writeBatch,deleteDoc , addDoc} from 'firebase/firestore';
-import { FaEdit,FaTrash  } from 'react-icons/fa';
-import ModalComponentAddCategory from '../ModalComponentAddCategory';
-import ModalComponentEditContent from "../ModalComponentEditContent";
-import ModalComponentAddContent from '../ModalComponentAddContent';
-import ModalComponentEditCategory from '../ModalComponetEditCategory'
+import ModalComponentAddCategory from '../Modals/ModalComponentAddCategory';
+import ModalComponentEditContent from "../Modals/ModalComponentEditContent";
+import ModalComponentAddContent from '../Modals/ModalComponentAddContent';
+import ModalComponentEditCategory from '../Modals/ModalComponetEditCategory'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
@@ -32,10 +31,6 @@ const Admin = () => {
   const [editingCategory, setEditingCategory] = useState(null); 
   const [addContentModalIsOpen, setAddContentModalIsOpen] = useState(null); 
   
-
-  
-
-
 
   const navigate = useNavigate();
 
@@ -119,7 +114,7 @@ const Admin = () => {
         return;
       }
 
-      // Firestore'a yeni içerik eklemek için addDoc kullanılır
+      // Firestore'a yeni içerik eklemek için addDoc
       await addDoc(collection(db, 'Menu'), {
         category: category.toLowerCase(),
         name: name,
@@ -190,7 +185,6 @@ const Admin = () => {
     setEditingContent(content);
     setEditModalIsOpen(true);
   };
-
   
   const handleModalEditSave = async ({ id, name, price, description, picture }) => {
     try {
@@ -237,7 +231,6 @@ const Admin = () => {
     setEditModalIsOpen(false);
     setEditingContent(null);
   };
-
 
   const handleDeleteContent = async (contentId, contentName) => {
     // Kullanıcıya silme işleminden önce bir onay modalı göster
@@ -291,13 +284,13 @@ const Admin = () => {
 
   const handleModalAddContentSave = ({ name, price, description, picture }) => {
     try {
-      // Yeni içeriği Firestore'a ekleyelim
+      // Yeni içeriği Firestore'a ekleme
       addDoc(collection(db, 'Menu'), {
         category: selectedCategory,
         name: name || '',
         price: price || '',
         description: description || '',
-        picture: picture || '',  // Eklenen "picture" parametresi
+        picture: picture || '',  
       });
   
       // Verileri tekrar çekme işlemi

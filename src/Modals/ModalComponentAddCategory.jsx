@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { storage } from './firebaseConfig';
+import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
@@ -11,17 +11,19 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState(null);
 
+  
+
   const handleSave = async () => {
     if (!categoryName.trim() || !name.trim() || !price.trim()) {
       console.error('Lütfen tüm zorunlu alanları doldurunuz.');
       return;
     }
 
-    // Upload the image file to Firebase Storage
+    //Firebase Storage resim yükleme
     const storageRef = ref(storage, `images/${imageFile.id}${imageFile.file.name}`);
     await uploadBytes(storageRef, imageFile.file);
 
-    // Get the download URL of the uploaded image
+    // image URL Alma
     const downloadURL = await getDownloadURL(storageRef);
 
     onSave({
@@ -32,7 +34,7 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       picture: downloadURL,
     });
 
-    // Reset state values
+    //değerleri temizle
     setCategoryName('');
     setName('');
     setPrice('');
@@ -45,7 +47,7 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
   const uploadProps = {
     beforeUpload: (file) => {
       setImageFile({ file: file });
-      return false; // false döndürerek antd'nin otomatik yükleme işlemini iptal et
+      return false; // false döndürerek antd'nin otomatik yükleme işlemini iptal etme
     },
   };
 
@@ -57,19 +59,17 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
     }
   
     try {
-      // Storage referansı oluşturun, ancak dosyayı yükleme işlemi için "uploadBytes" kullanmayın
       const storageRef = ref(storage, `images/${file.name}`);
       
-      // Doğrudan download URL alın
+      // Doğrudan download URL alma
       const downloadURL = await getDownloadURL(storageRef);
   
-      onSuccess(); // Başarılı yükleme olduğunu belirtin
+      onSuccess(); // Başarılı yükleme durumu
   
-      // downloadURL'yi kullanın (örneğin, state'e kaydedin veya üst düzey bileşene gönderin)
       console.log('File download URL:', downloadURL);
     } catch (error) {
       console.error('File upload error:', error);
-      onSuccess(error); // Yükleme hatası olduğunu belirtin
+      onSuccess(error); // Yükleme hatası durumu
       alert('Dosya yükleme hatası: ' + error.message);
     }
   };

@@ -10,9 +10,6 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 const Login = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
@@ -24,11 +21,9 @@ const Login = () => {
       setUser(user);
     });
 
-    // Component unmount olduğunda listener'ı temizle
+    // Component unmount olduğunda listener'ı temizleme
     return () => unsubscribe();
   }, []);
-
-
 
   const handleSubmit = async (values) => {
     try {
@@ -39,8 +34,9 @@ const Login = () => {
       toast.warning('Giriş Bilgilerinizi Kontrol Edin');
     }
   };
-
+  
   useEffect(() => {
+    //eğer giriş yapılmışsa admine yönlendir
     if (user) {
       navigate('/admin', { replace: true });
     }
