@@ -130,7 +130,10 @@ const Admin = () => {
       // Verileri tekrar çekme işlemi
       fetchData();
 
-      toast.success('İçerik başarıyla eklendi.');
+      toast.success('İçerik başarıyla eklendi.', {
+        autoClose: 1000,
+      });
+
       setAddCategoryModalIsOpen(false);
     } catch (error) {
       console.error('İçerik ekleme hatası:', error);
@@ -159,18 +162,19 @@ const Admin = () => {
   
               const batch = writeBatch(db);
   
-              categorySnapshot.forEach((categoryDoc) => {
+              categorySnapshot.forEach(async (categoryDoc) => {
                 const docRef = doc(db, 'Menu', categoryDoc.id);
                 batch.delete(docRef);
   
                 const imagePath = categoryDoc.data().picture;
                 if (imagePath) {
                   const imageRef = ref(storage, imagePath);
-                  deleteObject(imageRef).then(() => {
-        
-                  }).catch((error) => {
+                  try {
+                    await deleteObject(imageRef);
+                    // Image deleted successfully
+                  } catch (error) {
                     console.error('Error deleting image from storage:', error);
-                  });
+                  }
                 }
               });
   
@@ -179,8 +183,10 @@ const Admin = () => {
               // Kategorileri ve içerikleri tekrar çekme işlemi
               fetchData();
   
-              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`);
-
+              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`, {
+                autoClose: 1000,
+              });
+  
             } catch (error) {
               console.error('Kategori silme hatası:', error);
               toast.error('Kategori silme işlemi başarısız oldu.');
@@ -233,7 +239,10 @@ const Admin = () => {
       // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
   
-      toast.success('İçerik başarıyla güncellendi.');
+      toast.success('İçerik başarıyla güncellendi.',{
+        autoClose:1000
+      });
+
     } catch (error) {
       console.error('İçerik güncelleme hatası:', error);
       toast.error('İçerik güncelleme işlemi başarısız oldu.');
@@ -352,8 +361,12 @@ const Admin = () => {
   
       // Kategorileri tekrar çekme işlemi
       fetchData();
+
+      
   
-      toast.success('Category successfully updated.');
+      toast.success('Category successfully updated.', {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error('Category update error:', error);
       toast.error('Category update failed.');

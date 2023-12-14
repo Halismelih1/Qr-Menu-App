@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 
@@ -44,11 +44,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-200" style={{
-      backgroundImage: `url(/assets/1.png)`,
+      backgroundImage: `url(/assets/loginbg.png)`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'}}>
       <div className="bg-white p-8 rounded-md shadow-md md:w-96 w-full m-4 ">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Giriş Ekranı</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Admin Giriş Ekranı</h2>
         <Form name="login-form" onFinish={handleSubmit}>
           <Form.Item
             name="email"
