@@ -34,7 +34,6 @@ const Login = () => {
       toast.warning('Giriş Bilgilerinizi Kontrol Edin');
     }
   };
-  
   useEffect(() => {
     //eğer giriş yapılmışsa admine yönlendir
     if (user) {
@@ -44,7 +43,10 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-200 ">
+    <div className="min-h-screen flex items-center justify-center bg-gray-200" style={{
+      backgroundImage: `url(/assets/1.png)`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'}}>
       <div className="bg-white p-8 rounded-md shadow-md md:w-96 w-full m-4 ">
         <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Giriş Ekranı</h2>
         <Form name="login-form" onFinish={handleSubmit}>

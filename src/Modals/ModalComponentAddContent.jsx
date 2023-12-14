@@ -4,7 +4,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
+const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -110,7 +110,9 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd }) => {
       footer={null}
     >
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Add Content</h2>
+        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>
+          Add Content to {selectedCategory}
+        </h2>
 
         <Upload
       {...uploadProps}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Button,Upload } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { ref, getDownloadURL,deleteObject  } from 'firebase/storage';
 
 
 
@@ -16,6 +16,8 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [newPrice, setNewPrice] = useState(content.price || '');
   const [newDescription, setNewDescription] = useState(content.description || '');
   const [newPicture, setNewPicture] = useState(content.picture || ''); 
+  const [imagePath, setImagePath] = useState(content.picture || ''); // Store image path separately
+
 
 
   const handleSave = () => {
@@ -29,9 +31,26 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     onClose();
   };
 
-  const handleRemovePicture = () => {
-    setNewPicture(''); // Picture'ı sıfırla
+  const handleRemovePicture = async () => {
+    if (imagePath) {
+      try {
+        // Get a reference to the file in storage
+        const imageRef = ref(storage, imagePath);
+
+        // Delete the file from storage
+        await deleteObject(imageRef);
+
+        // Set the picture state to an empty string
+        setNewPicture('');
+
+        console.log('Image successfully deleted from storage.');
+      } catch (error) {
+        console.error('Error deleting image from storage:', error);
+        alert('Resim silme hatası: ' + error.message);
+      }
+    }
   };
+
 
   const uploadProps = {
     customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),

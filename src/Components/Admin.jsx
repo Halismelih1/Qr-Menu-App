@@ -3,6 +3,8 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
 import { collection, doc, getDocs, query, updateDoc, where, writeBatch,deleteDoc , addDoc} from 'firebase/firestore';
+import { ref,deleteObject  } from 'firebase/storage';
+import { storage } from '../firebaseConfig';
 import ModalComponentAddCategory from '../Modals/ModalComponentAddCategory';
 import ModalComponentEditContent from "../Modals/ModalComponentEditContent";
 import ModalComponentAddContent from '../Modals/ModalComponentAddContent';
@@ -11,10 +13,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
-import { Button, Card, Space, Modal,Typography } from 'antd';
-import { LogoutOutlined, FileAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Card,Typography } from 'antd';
+import { LogoutOutlined, FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
+const { Meta } = Card;
 
 
 const Admin = () => {
@@ -30,6 +33,7 @@ const Admin = () => {
   const [editCategoryModalIsOpen, setEditCategoryModalIsOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null); 
   const [addContentModalIsOpen, setAddContentModalIsOpen] = useState(null); 
+
   
 
   const navigate = useNavigate();
@@ -152,19 +156,31 @@ const Admin = () => {
               const categoryCollection = collection(db, 'Menu');
               const categoryQuery = query(categoryCollection, where('category', '==', category));
               const categorySnapshot = await getDocs(categoryQuery);
-
+  
               const batch = writeBatch(db);
+  
               categorySnapshot.forEach((categoryDoc) => {
                 const docRef = doc(db, 'Menu', categoryDoc.id);
                 batch.delete(docRef);
+  
+                const imagePath = categoryDoc.data().picture;
+                if (imagePath) {
+                  const imageRef = ref(storage, imagePath);
+                  deleteObject(imageRef).then(() => {
+        
+                  }).catch((error) => {
+                    console.error('Error deleting image from storage:', error);
+                  });
+                }
               });
-
+  
               await batch.commit();
-
+  
               // Kategorileri ve içerikleri tekrar çekme işlemi
               fetchData();
+  
+              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`);
 
-              toast.success(`"${category}" kategorisi başarıyla silindi.`);
             } catch (error) {
               console.error('Kategori silme hatası:', error);
               toast.error('Kategori silme işlemi başarısız oldu.');
@@ -268,14 +284,15 @@ const Admin = () => {
     });
   };
 
-  const handleAddContent = async () => {
+  const handleAddContent = (category) => {
     try {
-      if (!selectedCategory) {
+      if (!category) {
         // Kullanıcı henüz bir kategori seçmemişse, uyarı ver
         alert('Lütfen bir kategori seçin.');
         return;
       }
       setAddContentModalIsOpen(true);
+      setSelectedCategory(category);
     } catch (error) {
       console.error('İçerik ekleme hatası:', error);
       toast.error('İçerik ekleme işlemi başarısız oldu.');
@@ -348,7 +365,7 @@ const Admin = () => {
 
 
   return (
-    <div className="container mx-auto mt-8 p-4">
+    <div className="container min-h-screen overflow-y-hidden mx-auto mt-8 p-4">
       <header className="flex flex-col md:flex-row justify-between items-center mb-8">
         <div className="mb-4 md:mb-0">
           <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left">
@@ -374,11 +391,11 @@ const Admin = () => {
           Çıkış Yap
         </Button>
       </header>
-      <div className="mb-8 flex">
-  <div className="flex flex-col mb-4 mr-4">
+      <div className="mb-8 flex flex-col md:flex-row">
+      <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
     {categories.map((category) => (
-      <div key={category} className="flex items-center mb-2">
-        <Button
+            <div key={category} className="flex items-center mb-4 m-8 justify-between">
+            <Button
           type="primary"
           onClick={() => handleCategoryClick(category)}
           style={{
@@ -387,56 +404,71 @@ const Admin = () => {
             backgroundColor: '#1890ff',
             borderColor: '#1890ff',
             marginRight: '8px',
+            borderBottom: '2px solid black'
           }}
         >
           {category}
         </Button>
-        <div className="ml-auto">
-          <EditOutlined
-            onClick={() => handleEditCategory(category)}
-            className="cursor-pointer text-blue-500 ml-2"
-          />
-          <DeleteOutlined
-            onClick={() => handleDeleteCategory(category)}
-            className="cursor-pointer text-red-500 ml-2"
-          />
-        </div>
-      </div>
-    ))}
+        <div className="ml-2 flex items-center">
+      <span
+        className="cursor-pointer text-green-500"
+        onClick={() => handleAddContent(category)}
+      >
+        <PlusCircleOutlined />
+      </span>
+      <span className="cursor-pointer text-blue-500 ml-2" onClick={() => handleEditCategory(category)}>
+        <EditOutlined />
+      </span>
+      <span className="cursor-pointer text-red-500 ml-2" onClick={() => handleDeleteCategory(category)}>
+        <DeleteOutlined />
+      </span>
+    </div>
+  </div>
+))}
   </div>
   
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {(Array.isArray(adminData) ? adminData : []).map((item) => (
-            <div key={item.id} className="bg-white p-4 rounded-md shadow-md mb-4">
-              <h2 className="text-lg font-semibold mb-2">{item.name}</h2> <hr />
-              <p className="text-gray-600">${item.price}</p>
-              {item.description && (
-                <p className="text-gray-600 mt-2">{item.description}</p>
-              )}
-              <div className="flex mt-4 space-x-2">
-                <span
-                  onClick={handleAddContent}
-                  className="text-green-900 cursor-pointer font-bold"
-                >
-                  Add
-                </span>
-                <span
-                  onClick={() => handleEditContent(item)}
-                  className=" text-blue-700 cursor-pointer font-bold"
-                >
-                  Edit
-                </span>
-                <span
-                  onClick={() => handleDeleteContent(item.id, item.name)}
-                  className="text-red-500 cursor-pointer font-bold"
-                >
-                  Delete
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+  <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {(Array.isArray(adminData) ? adminData : []).map((item) => (
+          <Card
+            key={item.id}
+            style={{ width: '100%' }}
+            cover={
+              item.picture ? (
+                <img
+                  alt={item.name}
+                  src={item.picture}
+                  style={{
+                    objectFit: 'cover',
+                    width: '100%', 
+                    height: '170px', 
+                  }}
+                />
+              ) : (
+                <div className="no-image-placeholder">
+                  Bu ürün için eklenmiş bir resim bulunmamaktadır.
+                </div>
+              )
+            }
+            actions={[
+              <EditOutlined
+                key="edit"
+                onClick={() => handleEditContent(item)}
+              />,
+              <DeleteOutlined
+                key="delete"
+                onClick={() => handleDeleteContent(item.id, item.name)}
+              />,
+            ]}
+          >
+            <Meta
+              title={<span>{item.name}</span>}
+              description={<span>Açıklama: {item.description || 'Bu ürün için bir açıklama bulunamadı.'}</span>}
+            />
+            <p>Fiyat: &#8378;{item.price}</p>
+          </Card>
+        ))}
       </div>
+    </div>
   
      
   
@@ -445,6 +477,7 @@ const Admin = () => {
         isOpen={addContentModalIsOpen}
         onClose={handleModalAddContentClose}
         onAdd={handleModalAddContentSave}
+        selectedCategory={selectedCategory}
       />
   
       <ModalComponentEditCategory
