@@ -3,19 +3,19 @@ import { Modal, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { toast } from 'react-toastify';
 
 const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
   const [categoryName, setCategoryName] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [imageFile, setImageFile] = useState(null);
-
+  const [imageFile, setImageFile] = useState({ id: null, file: null });
   
 
   const handleSave = async () => {
-    if (!categoryName.trim() || !name.trim() || !price.trim()) {
-      console.error('Lütfen tüm zorunlu alanları doldurunuz.');
+    if (!categoryName.trim() || !name.trim() || !price.trim() || !imageFile.file) {
+      toast.error('Lütfen tüm zorunlu alanları doldurunuz.');
       return;
     }
 
@@ -39,14 +39,14 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
     setName('');
     setPrice('');
     setDescription('');
-    setImageFile(null);
+    setImageFile({ id: null, file: null }); // id ve file'ı sıfırla
 
     onClose();
   };
 
   const uploadProps = {
     beforeUpload: (file) => {
-      setImageFile({ file: file });
+      setImageFile({ id: Math.random().toString(36).substring(7), file: file }); // id'yi rastgele bir değer olarak atadık
       return false; // false döndürerek antd'nin otomatik yükleme işlemini iptal etme
     },
   };

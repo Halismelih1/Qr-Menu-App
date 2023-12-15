@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Input, Button,Upload } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
-import { ref, getDownloadURL,deleteObject  } from 'firebase/storage';
+import { ref, getDownloadURL,deleteObject,uploadBytesResumable   } from 'firebase/storage';
 
 
 
@@ -19,6 +19,11 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [imagePath, setImagePath] = useState(content.picture || ''); // Store image path separately
 
 
+  const handleCancel = () => {
+    // Eğer kullanıcı işlemi iptal ederse, resmi güncelleme
+    setNewPicture(content.picture || '');
+    onClose();
+  };
 
   const handleSave = () => {
     onSave({
@@ -26,30 +31,12 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       name: newName,
       price: newPrice,
       description: newDescription,
-      picture: newPicture,
+      picture: newPicture 
     });
     onClose();
   };
 
-  const handleRemovePicture = async () => {
-    if (imagePath) {
-      try {
-        // Get a reference to the file in storage
-        const imageRef = ref(storage, imagePath);
-
-        // Delete the file from storage
-        await deleteObject(imageRef);
-
-        // Set the picture state to an empty string
-        setNewPicture('');
-
-        console.log('Image successfully deleted from storage.');
-      } catch (error) {
-        console.error('Error deleting image from storage:', error);
-        alert('Resim silme hatası: ' + error.message);
-      }
-    }
-  };
+  // 
 
 
   const uploadProps = {
@@ -65,22 +52,38 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     }
 
     try {
-    
       const storageRef = ref(storage, `images/${file.name}`);
 
-      // Doğrudan download URL alın
-      const downloadURL = await getDownloadURL(storageRef);
+      // Eğer mevcut resim varsa, silme işlemi yapma
 
-      onSuccess(); // Başarılı yükleme durumu
+      // Yeni dosyayı yükle
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-    
-      setNewPicture(downloadURL);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Yükleme ilerleme durumu
+        },
+        (error) => {
+          // Yükleme hatası durumu
+          console.error('File upload error:', error);
+          onSuccess(error);
+          alert('Dosya yükleme hatası: ' + error.message);
+        },
+        async () => {
+          // Yükleme tamamlandığında
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          onSuccess();
+          setNewPicture(downloadURL);
+        }
+      );
     } catch (error) {
       console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
       alert('Dosya yükleme hatası: ' + error.message);
     }
   };
+  
 
 
 
@@ -102,13 +105,6 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
               alt="Content"
               style={{ maxWidth: '100px', marginRight: '10px' }}
             />
-            <Button
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={handleRemovePicture}
-            >
-              Remove Picture
-            </Button>
           </div>
         )}
         <Upload {...uploadProps}>
@@ -156,7 +152,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
         </Button>
         <Button
           danger
-          onClick={onClose}
+          onClick={handleCancel}
         >
           Cancel
         </Button>

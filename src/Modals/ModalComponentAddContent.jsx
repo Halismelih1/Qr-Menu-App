@@ -3,6 +3,8 @@ import { Modal, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) => {
   const [name, setName] = useState('');
@@ -22,7 +24,9 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
 
   const handleAdd = async () => {
     if (!name.trim() || !price.trim()) {
-      console.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
+        autoClose: 1000,
+      });
       return;
     }
 
@@ -47,7 +51,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
         name: name,
         price: price,
         description: description,
-        picture: downloadURL,
+        picture: downloadURL ,
       });
 
       // State değerlerini sıfırla

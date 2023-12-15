@@ -107,14 +107,18 @@ const Admin = () => {
   const handleModalAddCategorySave = async ({ category, name, price, description,picture }) => {
     try {
       if (!category.trim() || !name.trim() || !price.trim()) {
-        console.error('Geçersiz bilgi girişi.');
+        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
+          autoClose: 1000,
+        });
         return;
       }
 
       const categoryExists = categories.map(c => c.toLowerCase()).includes(category.toLowerCase());
       if (categoryExists) {
         // Aynı isimde bir kategori zaten varsa uyarı ver
-        alert('Bu isimde bir kategori zaten var. Başka bir isim seçin.');
+        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
+          autoClose: 1000,
+        });
         return;
       }
 
@@ -126,6 +130,7 @@ const Admin = () => {
         description: description,
         picture:picture
       });
+      
 
       // Verileri tekrar çekme işlemi
       fetchData();
@@ -448,7 +453,7 @@ const Admin = () => {
         {(Array.isArray(adminData) ? adminData : []).map((item) => (
           <Card
             key={item.id}
-            style={{ width: '100%',border: '1px solid black' }}
+            style={{ width: '100%'}}
             cover={
               item.picture ? (
                 <img
@@ -514,12 +519,14 @@ const Admin = () => {
         onSave={handleModalAddCategorySave}
       />
   
-      <ModalComponentEditContent
-        isOpen={editModalIsOpen}
-        onClose={handleModalEditClose}
-        onSave={handleModalEditSave}
-        content={editingContent}
-      />
+  {editingContent && (
+  <ModalComponentEditContent
+    isOpen={editModalIsOpen}
+    onClose={handleModalEditClose}
+    onSave={handleModalEditSave}
+    content={editingContent}
+  />
+)}
   
       <ToastContainer />
     </div>
