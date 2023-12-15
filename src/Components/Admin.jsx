@@ -222,6 +222,8 @@ const Admin = () => {
       const updateData = {
         name,
         price,
+        description,
+        picture,
       };
   
       // Eğer yeni açıklama varsa, onu da güncelleme verisine ekleme
