@@ -392,6 +392,7 @@ const Admin = () => {
           <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left">
             Welcome, {user.email}!
           </h1>
+          <hr />
         </div>
         <Button
         onClick={handleAddCategory}
