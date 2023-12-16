@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import { Button, Card,Typography } from 'antd';
-import { LogoutOutlined, FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
+import { LogoutOutlined,HomeOutlined ,FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 const { Meta } = Card;
@@ -383,32 +383,56 @@ const Admin = () => {
     }
   };
 
+  const navigateHome = ()=>{
+    navigate("/")
+  }
+
 
 
   return (
     <div className="container min-h-screen overflow-y-hidden mx-auto mt-8 p-4">
       <header className="flex flex-col md:flex-row justify-between items-center mb-8">
         <div className="mb-4 md:mb-0">
-          <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left">
-            Welcome, {user.email}!
+          <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left" style={{
+                     color: ' black',
+                    
+          }}>
+           Admin: {user.email}!
           </h1>
-          <hr />
+          <hr /> <br />
         </div>
         <Button
         onClick={handleAddCategory}
         style={{
           color: 'green',
           fontWeight: 'bold',
-          marginBottom:'4px'
+          marginBottom:'4px',
+          width:"100%",
+          borderRadius:"50px"
         }}
         icon={<FileAddOutlined />}
       >
-        Add Category
+        Kategori Ekle
+      </Button>
+      <Button
+        onClick={navigateHome}
+        style={{
+          color: '#008B8B',
+          fontWeight: 'bold',
+          marginBottom:'4px',
+          width:"100%",
+          borderRadius:"50px"
+        }}
+        icon={<HomeOutlined />}
+      >
+        Anasayfa
       </Button>
         <Button
           icon={<LogoutOutlined />}
           onClick={handleSignOut}
-          style={{ color: '#FF0000', fontWeight: 'bold' }}
+          style={{ color: '#FF0000', fontWeight: 'bold', width:"100%",
+          borderRadius:"50px" }}
+          
         >
           Çıkış Yap
         </Button>
@@ -423,10 +447,13 @@ const Admin = () => {
           style={{
             width: '120px',
             height: '40px',
-            backgroundColor: '#1890ff',
-            borderColor: '#1890ff',
+            backgroundColor: '#FFA500',
+            borderColor: 'black',
             marginRight: '8px',
-            borderBottom: '2px solid black'
+            borderBottom: '4px solid black',
+            color:"black",
+            
+            
           }}
         >
           {category}
