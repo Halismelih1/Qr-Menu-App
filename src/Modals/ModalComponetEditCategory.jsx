@@ -21,18 +21,18 @@ const ModalComponentEditCategory = ({ isOpen, onClose, onSave, editingCategory }
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Close
+          Vazgeç
         </Button>,
         <Button style={{ backgroundColor: 'green', color: 'black' }} key="update" type="primary" onClick={handleSave}>
-          Update
+          Güncelle
         </Button>,
       ]}
-      title="Edit Category"
+      title="Kategori İsmini Düzenle"
       centered
       destroyOnClose
     >
       <div style={{ marginBottom: '10px' }}>
-        <label>New Category Name:</label>
+        <label>Yeni Kategori İsmi:</label>
         <Input
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}

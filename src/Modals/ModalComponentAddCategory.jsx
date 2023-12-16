@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined,ArrowDownOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-toastify';
@@ -81,52 +81,55 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
     <Modal
       visible={isOpen}
       onCancel={onClose}
-      title="Add Category"
+      title="Kategori Ekleme"
       footer={null}
     >
       <div style={{ marginBottom: '10px' }}>
-        <label>Category Name:</label>
         <Input
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
           style={{ marginBottom: '10px' }}
+          placeholder='Kategori İsmi'
         />
       </div>
+      <h3>{<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}</h3>
+      <hr /> <br />
+      
 
       <div style={{ marginBottom: '10px' }}>
-        <label className='mr-2'>Picture:</label>
+        <label className='mr-2'>Dosya:</label>
         <Upload
           {...uploadProps}
           customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
         >
-          <Button icon={<UploadOutlined />}>Select File</Button>
+          <Button icon={<UploadOutlined />}>Ekleyeceğiniz Ürün İçin Resim seçin</Button>
         </Upload>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label>Name:</label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{ marginBottom: '10px' }}
+          placeholder='Ürün İsmi'
         />
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label>Price:</label>
         <Input
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           style={{ marginBottom: '10px' }}
+            placeholder='Ürün Fiyatı'
         />
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label>Description:</label>
         <Input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           style={{ marginBottom: '10px' }}
+          placeholder='İsteğe Bağlı Açıklama Girebilirsiniz..'
         />
       </div>
 
@@ -136,14 +139,14 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
         style={{ background: 'green', marginRight: '10px' }}
         onClick={handleSave}
       >
-        Save
+        Kategoriyi Kaydet
       </Button>
 
       <Button
         danger
         onClick={onClose}
       >
-        Close
+        Vazgeç
       </Button>
     </div>
   </Modal>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button,Upload } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UploadOutlined, ArrowRightOutlined} from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, getDownloadURL,deleteObject,uploadBytesResumable   } from 'firebase/storage';
 
@@ -91,13 +91,12 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     <Modal
       visible={isOpen}
       onCancel={onClose}
-      title="Edit Content"
+      title="Ürün Düzenleme"
       footer={null}
     >
-      <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Edit Content</h2>
-
-      <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Picture:</label>
+      <hr /> <br />
+      <div style={{ marginBottom: '10px',display:"flex", alignItems:"center" }}>
+        <label style={{ marginBottom: '2px' }}>Mevcut Resim <ArrowRightOutlined /></label>
         {newPicture && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <img
@@ -108,12 +107,12 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
           </div>
         )}
         <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />}>Select File</Button>
+          <Button icon={<UploadOutlined />}>Yeni Resim</Button>
         </Upload>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Name:</label>
+        <label style={{ marginBottom: '2px' }}>Ürün İsmi:</label>
         <Input
           type="text"
           value={newName}
@@ -123,7 +122,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Price:</label>
+        <label style={{ marginBottom: '2px' }}>Ürün Fiyatı:</label>
         <Input
           type="text"
           value={newPrice}
@@ -133,7 +132,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Description:</label>
+        <label style={{ marginBottom: '2px' }}>Açıklama:</label>
         <Input
           type="text"
           value={newDescription}
@@ -154,7 +153,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
           danger
           onClick={handleCancel}
         >
-          Cancel
+          Vazgeç
         </Button>
       </div>
     </Modal>

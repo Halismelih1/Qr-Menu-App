@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined,ArrowRightOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ToastContainer, toast } from 'react-toastify';
@@ -115,7 +115,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
     >
       <div style={{ textAlign: 'center' }}>
         <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px', marginTop:'20px' }}>
-          Ekle | "{selectedCategory}"
+          Ekle <ArrowRightOutlined /> "{selectedCategory}"
         </h2>
 
         <Upload
@@ -123,25 +123,25 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
       onChange={handleChange}  
       >
-      <Button style={{marginBottom:"10px"}} icon={<UploadOutlined />}>Select File</Button>
+      <Button style={{marginBottom:"10px"}} icon={<UploadOutlined />}>Resim Seçin</Button>
       </Upload>
 
         <Input
-          placeholder="Name"
+          placeholder="Ürün İsmi"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
 
         <Input
-          placeholder="Price"
+          placeholder="Ürün Fiyatı"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
 
         <Input
-          placeholder="Description"
+          placeholder="İsteğe Bağlı Açıklama Girebilirsiniz"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           style={{ marginBottom: '10px' }}
@@ -153,13 +153,13 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
             style={{ background: 'green', marginRight: '10px' }}
             onClick={handleAdd}
           >
-            Add
+            Ürünü Ekle
           </Button>
           <Button
             danger
             onClick={onClose}
           >
-            Cancel
+            Vazgeç
           </Button>
         </div>
       </div>
