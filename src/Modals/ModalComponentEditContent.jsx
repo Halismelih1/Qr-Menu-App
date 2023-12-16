@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Input, Button,Upload } from 'antd';
+import { Modal, Input, Button,Upload,message } from 'antd';
 import { UploadOutlined, ArrowRightOutlined} from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
-import { ref, getDownloadURL,deleteObject,uploadBytesResumable   } from 'firebase/storage';
+import { ref, getDownloadURL,uploadBytesResumable   } from 'firebase/storage';
 
 
 
@@ -16,32 +16,16 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [newPrice, setNewPrice] = useState(content.price || '');
   const [newDescription, setNewDescription] = useState(content.description || '');
   const [newPicture, setNewPicture] = useState(content.picture || ''); 
-  const [imagePath, setImagePath] = useState(content.picture || ''); // Store image path separately
 
+  const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
-  const handleCancel = () => {
-    // Eğer kullanıcı işlemi iptal ederse, resmi güncelleme
-    setNewPicture(content.picture || '');
-    onClose();
-  };
-
-  const handleSave = () => {
-    onSave({
-      id: content.id,
-      name: newName,
-      price: newPrice,
-      description: newDescription,
-      picture: newPicture 
-    });
-    onClose();
-  };
-
-  // 
-
-
-  const uploadProps = {
-    customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
-    showUploadList: false, // Dosya listesini gizle
+  const beforeUpload = (file) => {
+    // Dosya türünü kontrol et
+    const isImage = allowedFileTypes.includes(file.type);
+    if (!isImage) {
+      message.error('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).');
+    }
+    return isImage;
   };
 
   const handleImageUpload = async (file, onSuccess) => {
@@ -82,6 +66,28 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       onSuccess(error); // Yükleme hatası durumu
       alert('Dosya yükleme hatası: ' + error.message);
     }
+  };
+  const uploadProps = {
+    customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
+    beforeUpload,
+    showUploadList: false, // Dosya listesini gizle
+  };
+
+  const handleCancel = () => {
+    // Eğer kullanıcı işlemi iptal ederse, resmi güncelleme
+    setNewPicture(content.picture || '');
+    onClose();
+  };
+
+  const handleSave = () => {
+    onSave({
+      id: content.id,
+      name: newName,
+      price: newPrice,
+      description: newDescription,
+      picture: newPicture 
+    });
+    onClose();
   };
   
 

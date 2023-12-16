@@ -3,7 +3,7 @@ import { Modal, Input, Button, Upload, message } from 'antd';
 import { UploadOutlined,ArrowRightOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) => {
@@ -19,19 +19,41 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
     if (!fileList || fileList.length === 0) {
       return;
     }
+
+    const selectedFile = fileList[0].originFileObj;
+
+    // Dosya türünü kontrol et
+    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const isImage = allowedFileTypes.includes(selectedFile.type);
+
+    if (!isImage) {
+      setFileList([]); // Clear the fileList to hide the selected file
+      return;
+    }
+
     setFileList(fileList);
+  };
+
+  const beforeUpload = (file) => {
+    // Dosya türünü kontrol et
+    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const isImage = allowedFileTypes.includes(file.type);
+
+    if (!isImage) {
+      message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png)',2);
+    }
+
+    return isImage;
   };
 
   const handleAdd = async () => {
     if (!name.trim() || !price.trim()) {
-      toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
-        autoClose: 1000,
-      });
+      message.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !',2);
       return;
     }
 
     if (fileList.length === 0) {
-      message.error('Lütfen bir dosya seçin.');
+      message.warning('Lütfen bir dosya seçin.',2);
       return;
     }
 
@@ -51,7 +73,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
         name: name,
         price: price,
         description: description,
-        picture: downloadURL ,
+        picture: downloadURL,
       });
 
       // State değerlerini sıfırla
@@ -64,45 +86,14 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       onClose();
     } catch (error) {
       console.error('Dosya yükleme hatası:', error);
-      message.error('Dosya yükleme hatası: ' + error.message);
+      message.error('Dosya Yükleme Hatası Lütfen Tekrar Deneyin',2)
     }
   };
 
   const uploadProps = {
-    beforeUpload: (file) => {
-      // Dosya seçilmediyse işlemi iptal et
-      if (!file) {
-        return false;
-      }
-      setImageFile({ file: file });
-      return true;
-    },
+    beforeUpload,
   };
 
-  const handleImageUpload = async (file, onSuccess) => {
-    if (!file) {
-      console.error('Dosya bilgisi bulunamadı.');
-      onSuccess(new Error('Dosya bilgisi bulunamadı.'));
-      return;
-    }
-  
-    try {
-      // Storage referansı oluşturun, ancak dosyayı yükleme işlemi için "uploadBytes" kullanmayın
-      const storageRef = ref(storage, `images/${file.name}`);
-      
-      // Doğrudan download URL alın
-      const downloadURL = await getDownloadURL(storageRef);
-  
-      onSuccess(); // Başarılı yükleme olduğunu belirtin
-  
-      // downloadURL'yi kullanın (örneğin, state'e kaydedin veya üst düzey bileşene gönderin)
-      console.log('File download URL:', downloadURL);
-    } catch (error) {
-      console.error('File upload error:', error);
-      onSuccess(error); // Yükleme hatası olduğunu belirtin
-      alert('Dosya yükleme hatası: ' + error.message);
-    }
-  };
 
 
 
@@ -119,12 +110,13 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
         </h2>
 
         <Upload
-      {...uploadProps}
-      customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
-      onChange={handleChange}  
-      >
-      <Button style={{marginBottom:"10px"}} icon={<UploadOutlined />}>Resim Seçin</Button>
-      </Upload>
+          {...uploadProps}
+          customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
+          onChange={handleChange}
+          fileList={fileList}
+        >
+          <Button style={{ marginBottom: "10px" }} icon={<UploadOutlined />}>Resim Seçin</Button>
+        </Upload>
 
         <Input
           placeholder="Ürün İsmi"
