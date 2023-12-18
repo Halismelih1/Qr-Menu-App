@@ -223,12 +223,15 @@ const Admin = () => {
       // İlgili belgenin referansını alma
       const contentDocRef = doc(db, 'Menu', id);
   
+      // Eski içeriğin verilerini alma
+      const oldContentSnapshot = await getDoc(contentDocRef);
+      const oldPicturePath = oldContentSnapshot.data().picture;
+  
       // Belgeyi güncelleme işlemi
       const updateData = {
         name,
         price,
         description,
-        picture,
       };
   
       // Eğer yeni açıklama varsa, onu da güncelleme verisine ekleme
@@ -236,9 +239,20 @@ const Admin = () => {
         updateData.description = description;
       }
   
-      // Eğer yeni picture varsa, onu da güncelleme verisine ekleme
+      // Eğer yeni resim varsa, onu da güncelleme verisine ekleme
       if (picture !== null) {
         updateData.picture = picture;
+  
+        // Eski resmi Storage'dan silme işlemi
+        if (oldPicturePath) {
+          const oldImageRef = ref(storage, oldPicturePath);
+          try {
+            await deleteObject(oldImageRef);
+            // Eski resim başarıyla silindi
+          } catch (error) {
+            console.error('Error deleting old image from storage:', error);
+          }
+        }
       }
   
       await updateDoc(contentDocRef, updateData);
@@ -246,10 +260,9 @@ const Admin = () => {
       // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
   
-      toast.success('İçerik başarıyla güncellendi.',{
-        autoClose:1000
+      toast.success('İçerik başarıyla güncellendi.', {
+        autoClose: 1000,
       });
-
     } catch (error) {
       console.error('İçerik güncelleme hatası:', error);
       toast.error('İçerik güncelleme işlemi başarısız oldu.');
