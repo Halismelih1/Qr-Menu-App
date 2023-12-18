@@ -16,32 +16,35 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
 
   const handleSave = async () => {
     if (!categoryName.trim() || !name.trim() || !price.trim() || !imageFile) {
-      message.warning('Lütfen tüm zorunlu alanları doldurunuz.',2);
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.', 2);
       return;
     }
-
+  
     // Firebase Storage resim yükleme
     const storageRef = ref(storage, `images/${imageFile.uid}${imageFile.name}`);
     await uploadBytes(storageRef, imageFile);
-
+  
     // image URL Alma
     const downloadURL = await getDownloadURL(storageRef);
-
+  
+    // Kategori ismini küçük harfe dönüştürerek kontrol et
+    const categoryLowerCase = categoryName.toLowerCase();
+  
     onSave({
-      category: categoryName.toLowerCase(),
+      category: categoryLowerCase,
       name: name,
       price: price,
       description: description,
       picture: downloadURL,
     });
-
+  
     // değerleri temizle
     setCategoryName('');
     setName('');
     setPrice('');
     setDescription('');
     setImageFile(null);
-
+  
     onClose();
   };
 

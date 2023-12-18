@@ -9,11 +9,9 @@ import ModalComponentAddCategory from '../Modals/ModalComponentAddCategory';
 import ModalComponentEditContent from "../Modals/ModalComponentEditContent";
 import ModalComponentAddContent from '../Modals/ModalComponentAddContent';
 import ModalComponentEditCategory from '../Modals/ModalComponetEditCategory'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
-import { Button, Card,Typography } from 'antd';
+import { Button, Card,Typography,message } from 'antd';
 import { LogoutOutlined,HomeOutlined ,FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
@@ -42,11 +40,10 @@ const Admin = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      console.log('Çıkış başarılı.');
+      message.success('Çıkış başarılı.');
       navigate('/');
     } catch (error) {
-      console.error('Çıkış hatası:', error);
-      toast.error('Çıkış yapılırken bir hata oluştu.');
+      message.error('Çıkış yapılırken bir hata oluştu.');
     }
   };
 
@@ -69,8 +66,7 @@ const Admin = () => {
       setAdminData(data);
       
     } catch (error) {
-      console.error('Veri çekme hatası:', error);
-      toast.error('Veri çekme işlemi başarısız oldu.');
+      message.error('Veri çekme işlemi başarısız oldu.');
     }
   };
 
@@ -95,8 +91,7 @@ const Admin = () => {
         setAdminData(categoryData);
       }
     } catch (error) {
-      console.error('Kategoriye tıklama hatası:', error);
-      setAdminData([]); // Hata durumunda adminData'ya geçerli bir dizi atıyoruz
+      setAdminData([]);
     }
   };
 
@@ -104,45 +99,37 @@ const Admin = () => {
     setAddCategoryModalIsOpen(true);
   };
 
-  const handleModalAddCategorySave = async ({ category, name, price, description,picture }) => {
+  const handleModalAddCategorySave = async ({ category, name, price, description, picture }) => {
     try {
-      if (!category.trim() || !name.trim() || !price.trim()) {
-        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
-          autoClose: 1000,
-        });
+      if (!category.trim() || !name.trim() || !price.trim() || !picture) {
+        message.warning('Lütfen Tüm Zorunlu Alanları Doldurunuz !', 2);
         return;
       }
-
-      const categoryExists = categories.map(c => c.toLowerCase()).includes(category.toLowerCase());
+  
+      // Kategori ismini küçük harfe dönüştürerek kontrol et
+      const categoryLowerCase = category.toLowerCase();
+      const categoryExists = categories.map(c => c.toLowerCase()).includes(categoryLowerCase);
+  
       if (categoryExists) {
-        // Aynı isimde bir kategori zaten varsa uyarı ver
-        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
-          autoClose: 1000,
-        });
+        message.warning('Bu isimde bir kategori mevcut, lütfen farklı bir isim girin !', 2);
         return;
       }
-
-      // Firestore'a yeni içerik eklemek için addDoc
+  
       await addDoc(collection(db, 'Menu'), {
-        category: category.toLowerCase(),
+        category: categoryLowerCase,
         name: name,
         price: price,
         description: description,
-        picture:picture
+        picture: picture
       });
-      
-
-      // Verileri tekrar çekme işlemi
+  
       fetchData();
-
-      toast.success('İçerik başarıyla eklendi.', {
-        autoClose: 1000,
-      });
-
+  
+      message.success('İçerik başarıyla eklendi.', 2);
+  
       setAddCategoryModalIsOpen(false);
     } catch (error) {
-      console.error('İçerik ekleme hatası:', error);
-      toast.error('İçerik ekleme işlemi başarısız oldu.');
+      message.error('İçerik ekleme işlemi başarısız oldu.');
     }
   };
 
@@ -176,32 +163,27 @@ const Admin = () => {
                   const imageRef = ref(storage, imagePath);
                   try {
                     await deleteObject(imageRef);
-                    // Image deleted successfully
                   } catch (error) {
-                    console.error('Error deleting image from storage:', error);
+                    console.error('Error :', error);
                   }
                 }
               });
   
               await batch.commit();
   
-              // Kategorileri ve içerikleri tekrar çekme işlemi
               fetchData();
   
-              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`, {
-                autoClose: 1000,
-              });
+              message.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`, 2
+             );
   
             } catch (error) {
-              console.error('Kategori silme hatası:', error);
-              toast.error('Kategori silme işlemi başarısız oldu.');
+              message.error('Kategori silme işlemi başarısız oldu.');
             }
           },
         },
         {
           label: 'Hayır',
           onClick: () => {
-            // Kullanıcı "Hayır" derse bir şey yapmaya gerek yok
           },
         },
       ],
@@ -216,7 +198,7 @@ const Admin = () => {
   const handleModalEditSave = async ({ id, name, price, description, picture }) => {
     try {
       if (!id) {
-        console.error('Content ID is undefined.');
+        message.error('Tanımsız Content ID');
         return;
       }
   
@@ -250,22 +232,18 @@ const Admin = () => {
             await deleteObject(oldImageRef);
             // Eski resim başarıyla silindi
           } catch (error) {
-            console.error('Error deleting old image from storage:', error);
+            message.error('Error deleting old image from storage:', error);
           }
         }
       }
   
       await updateDoc(contentDocRef, updateData);
   
-      // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
   
-      toast.success('İçerik başarıyla güncellendi.', {
-        autoClose: 1000,
-      });
+      message.success('İçerik başarıyla güncellendi.', 2);
     } catch (error) {
-      console.error('İçerik güncelleme hatası:', error);
-      toast.error('İçerik güncelleme işlemi başarısız oldu.');
+      message.error('İçerik güncelleme işlemi başarısız oldu.');
     } finally {
       setEditModalIsOpen(false);
       setEditingContent(null);
@@ -299,27 +277,24 @@ const Admin = () => {
                   await deleteObject(imageRef);
                   // Resim başarıyla silindi
                 } catch (error) {
-                  console.error('Storage\'dan resim silme hatası:', error);
+                  message.error('Storage\'dan resim silme hatası,tekrar deneyin');
                 }
               }
   
               // Belgeyi silme işlemi
               await deleteDoc(contentDocRef);
   
-              // Verileri tekrar çekme işlemi
               fetchData();
   
-              toast.success('İçerik başarıyla silindi.');
+              message.success('İçerik başarıyla silindi.',2);
             } catch (error) {
-              console.error('İçerik silme hatası:', error);
-              toast.error('İçerik silme işlemi başarısız oldu.');
+              message.error('İçerik silme işlemi başarısız oldu.',2);
             }
           },
         },
         {
           label: 'Hayır',
           onClick: () => {
-            // Kullanıcı "Hayır" derse bir şey yapmaya gerek yok
           },
         },
       ],
@@ -330,14 +305,13 @@ const Admin = () => {
     try {
       if (!category) {
         // Kullanıcı henüz bir kategori seçmemişse, uyarı ver
-        alert('Lütfen bir kategori seçin.');
+        message.warning('Lütfen bir kategori seçin.',2);
         return;
       }
       setAddContentModalIsOpen(true);
       setSelectedCategory(category);
     } catch (error) {
-      console.error('İçerik ekleme hatası:', error);
-      toast.error('İçerik ekleme işlemi başarısız oldu.');
+      message.error('İçerik ekleme işlemi başarısız oldu, lütfen tekrar deneyin');
     }
   };
 
@@ -352,14 +326,12 @@ const Admin = () => {
         picture: picture || '',  
       });
   
-      // Verileri tekrar çekme işlemi
       fetchData();
   
-      toast.success('İçerik başarıyla eklendi.');
+      message.success('İçerik başarıyla eklendi.',2);
       setAddContentModalIsOpen(false);
     } catch (error) {
-      console.error('İçerik ekleme hatası:', error);
-      toast.error('İçerik ekleme işlemi başarısız oldu.');
+      message.error('İçerik ekleme işlemi başarısız oldu, lütfen tekrar deneyin');
     }
   };
 
@@ -375,7 +347,6 @@ const Admin = () => {
   const handleModalEditCategorySave = async (newCategoryName) => {
     try {
       if (!editingCategory || !newCategoryName) {
-        console.error('Invalid data for category edit.');
         return;
       }
   
@@ -391,17 +362,13 @@ const Admin = () => {
   
       await batch.commit();
   
-      // Kategorileri tekrar çekme işlemi
       fetchData();
 
       
   
-      toast.success('Category successfully updated.', {
-        autoClose: 1000,
-      });
+      message.success('Kategori güncellendi', 2);
     } catch (error) {
-      console.error('Category update error:', error);
-      toast.error('Category update failed.');
+      message.error('Kategori güncelleme işlemi başarısız, lütfen tekrar deneyin');
     } finally {
       setEditCategoryModalIsOpen(false);
       setEditingCategory(null);
@@ -581,7 +548,6 @@ const Admin = () => {
   />
 )}
   
-      <ToastContainer />
     </div>
   );
 
