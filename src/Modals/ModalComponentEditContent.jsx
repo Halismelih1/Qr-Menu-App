@@ -6,7 +6,6 @@ import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   if (!content) {
-    console.error('Content is null or undefined.');
     return null;
   }
 
@@ -21,14 +20,13 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     // Dosya türünü kontrol et
     const isImage = allowedFileTypes.includes(file.type);
     if (!isImage) {
-      message.error('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).');
+      message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).');
     }
     return isImage;
   };
 
   const handleImageUpload = async (file, onSuccess) => {
     if (!file) {
-      console.error('Dosya bilgisi bulunamadı.');
       onSuccess(new Error('Dosya bilgisi bulunamadı.'));
       return;
     }
@@ -36,7 +34,6 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     try {
       const storageRef = ref(storage, `images/${file.name}`);
 
-      // Eğer mevcut resim varsa, silme işlemi yapma
 
       // Yeni dosyayı yükle
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -48,9 +45,8 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
         },
         (error) => {
           // Yükleme hatası durumu
-          console.error('File upload error:', error);
           onSuccess(error);
-          alert('Dosya yükleme hatası: ' + error.message);
+          message.error('Dosya yükleme hatası lütfen tekrar deneyin');
         },
         async () => {
           // Yükleme tamamlandığında
@@ -60,15 +56,14 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
         }
       );
     } catch (error) {
-      console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
-      alert('Dosya yükleme hatası: ' + error.message);
+      message.error('Dosya yükleme hatası lütfen tekrar deneyin');
     }
   };
   const uploadProps = {
     customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
     beforeUpload,
-    showUploadList: false, // Dosya listesini gizle
+    showUploadList: false, 
   };
 
   const handleCancel = () => {
@@ -78,9 +73,9 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   };
 
   const handleSave = () => {
-    // Validation for required fields
+
     if (!newName.trim() || !newPrice.trim() || !newPicture) {
-      message.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.');
       return;
     }
 
