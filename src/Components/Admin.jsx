@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
-import { collection, doc, getDocs, query, updateDoc, where, writeBatch,deleteDoc , addDoc} from 'firebase/firestore';
+import { collection, doc, getDocs, query, updateDoc, where, writeBatch,deleteDoc ,getDoc, addDoc} from 'firebase/firestore';
 import { ref,deleteObject  } from 'firebase/storage';
 import { storage } from '../firebaseConfig';
 import ModalComponentAddCategory from '../Modals/ModalComponentAddCategory';
@@ -277,12 +277,24 @@ const Admin = () => {
               // İlgili belgenin referansını alma
               const contentDocRef = doc(db, 'Menu', contentId);
   
+              // İlgili içeriğin resim dosyasının Storage'dan silinmesi
+              const contentSnapshot = await getDoc(contentDocRef);
+              const imagePath = contentSnapshot.data().picture;
+              if (imagePath) {
+                const imageRef = ref(storage, imagePath);
+                try {
+                  await deleteObject(imageRef);
+                  // Resim başarıyla silindi
+                } catch (error) {
+                  console.error('Storage\'dan resim silme hatası:', error);
+                }
+              }
+  
               // Belgeyi silme işlemi
               await deleteDoc(contentDocRef);
   
               // Verileri tekrar çekme işlemi
               fetchData();
-
   
               toast.success('İçerik başarıyla silindi.');
             } catch (error) {
