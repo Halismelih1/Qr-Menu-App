@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined,ArrowRightOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) => {
+
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [fileList, setFileList] = useState([]);
 
+
+
   const handleChange = ({ fileList }) => {
-    // Dosya seçilmediyse işlemi iptal et
+
     if (!fileList || fileList.length === 0) {
       return;
     }
@@ -20,12 +23,12 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
 
   const handleAdd = async () => {
     if (!name.trim() || !price.trim()) {
-      console.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.',2);
       return;
     }
 
     if (fileList.length === 0) {
-      message.error('Lütfen bir dosya seçin.');
+      message.warning('Lütfen ürününüz için bir resim seçin.',2);
       return;
     }
 
@@ -35,7 +38,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
       // Doğru dosya türlerini kontrol etme
       const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedFileTypes.includes(selectedFile.type)) {
-        message.error('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.');
+        message.warning('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.',2);
         return;
       }
 
@@ -65,38 +68,37 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
       // Modal'ı kapat
       onClose();
     } catch (error) {
-      console.error('Dosya yükleme hatası:', error);
-      message.error('Dosya yükleme hatası: ' + error.message);
+      message.error('Dosya yükleme hatası lütfen tekrar deneyin',2);
     }
   };
 
   const uploadProps = {
     beforeUpload: (file) => {
-      // Dosya seçilmediyse işlemi iptal et
       if (!file) {
         return false;
       }
       setFileList([file]);
-      return false; // false döndüğünüzde, antd Upload component'i dosyayı otomatik olarak yüklemez
+      return false; 
     },
   };
+
 
   return (
     <Modal visible={isOpen} onCancel={onClose} centered footer={null}>
       <div style={{ textAlign: 'center' }}>
         <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>
-          Add Content to {selectedCategory}
+          Ekle <ArrowRightOutlined /> "{selectedCategory}"
         </h2>
 
         <Upload {...uploadProps} onChange={handleChange}>
-          <Button icon={<UploadOutlined />}>Select File</Button>
+          <Button icon={<UploadOutlined />}>Resim Seç</Button>
         </Upload>
 
         <Input
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ marginBottom: '10px' }}
+          style={{ marginBottom: '10px', marginTop:"10px" }}
         />
 
         <Input

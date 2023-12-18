@@ -20,7 +20,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     // Dosya türünü kontrol et
     const isImage = allowedFileTypes.includes(file.type);
     if (!isImage) {
-      message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).');
+      message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).',2);
     }
     return isImage;
   };
@@ -75,7 +75,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const handleSave = () => {
 
     if (!newName.trim() || !newPrice.trim() || !newPicture) {
-      message.warning('Lütfen tüm zorunlu alanları doldurunuz.');
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.',2);
       return;
     }
 
