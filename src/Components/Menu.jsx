@@ -10,13 +10,17 @@ const Menu = ({ categoryItems, categories }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
+
 
 
 
   useEffect(() => {
     setFilteredItems([]);
-    message.success('Hoşgeldiniz!',2
-     );
+    message.open({
+      content: 'Hoşgeldiniz!',
+      duration: 2,
+    });
   }, []);
 
   const filterItemsByCategory = (category) => {
@@ -29,6 +33,7 @@ const Menu = ({ categoryItems, categories }) => {
         : [];
       setSelectedCategory(category);
       setFilteredItems(filtered);
+      setHasSelectedCategory(true);
     }
   };
 
@@ -59,19 +64,24 @@ const Menu = ({ categoryItems, categories }) => {
 
   
   return (
-    <div className="min-h-screen text-gray-800 p-4" style={{
-      backgroundImage: `url(/assets/menubg.png)`,
+    <div
+    className="min-h-screen text-gray-800 p-4"
+    style={{
+      backgroundImage: hasSelectedCategory
+        ? 'none'
+        : `url(/assets/menubg.png)`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-    }}>
+    }}
+  >
       <Row justify="center" align="middle" gutter={[16, 16]}>
 
         <Col span={24}>
           <Button
             type="primary"
             onClick={showDrawer}
-            className="mb-4 menu-button"
-            style={{ backgroundColor: 'white', borderColor: '#3498db', color:"black" }}
+            className="mt-12 ml-2"
+            style={{ backgroundColor: 'white', borderColor: '#ffffff', color:"black" }}
             icon={<MenuOutlined />}
           >
             Kategoriler
