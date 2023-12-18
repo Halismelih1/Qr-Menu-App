@@ -1,49 +1,21 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
-import { UploadOutlined,ArrowRightOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
-const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) => {
+const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [fileList, setFileList] = useState([]);
-
- 
 
   const handleChange = ({ fileList }) => {
     // Dosya seçilmediyse işlemi iptal et
     if (!fileList || fileList.length === 0) {
       return;
     }
-
-    const selectedFile = fileList[0].originFileObj;
-
-    // Dosya türünü kontrol et
-    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    const isImage = allowedFileTypes.includes(selectedFile.type);
-
-    if (!isImage) {
-      setFileList([]); // Clear the fileList to hide the selected file
-      return;
-    }
-
     setFileList(fileList);
-  };
-
-  const beforeUpload = (file) => {
-    // Dosya türünü kontrol et
-    const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    const isImage = allowedFileTypes.includes(file.type);
-
-    if (!isImage) {
-      message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png)',2);
-    }
-
-    return isImage;
   };
 
   const handleAdd = async () => {
@@ -57,9 +29,17 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       return;
     }
 
+    const selectedFile = fileList[0].originFileObj;
+
     try {
+      // Doğru dosya türlerini kontrol etme
+      const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedFileTypes.includes(selectedFile.type)) {
+        message.error('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.');
+        return;
+      }
+
       // Dosya adını belirleme
-      const selectedFile = fileList[0].originFileObj;
       const storageRef = ref(storage, `images/${selectedFile.name}`);
 
       // Dosyayı Firebase Storage'a yükleme
@@ -96,93 +76,49 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
       if (!file) {
         return false;
       }
-      setImageFile({ file: file });
-      return true;
+      setFileList([file]);
+      return false; // false döndüğünüzde, antd Upload component'i dosyayı otomatik olarak yüklemez
     },
   };
 
-  const handleImageUpload = async (file, onSuccess) => {
-    if (!file) {
-      console.error('Dosya bilgisi bulunamadı.');
-      onSuccess(new Error('Dosya bilgisi bulunamadı.'));
-      return;
-    }
-  
-    try {
-      // Storage referansı oluşturun, ancak dosyayı yükleme işlemi için "uploadBytes" kullanmayın
-      const storageRef = ref(storage, `images/${file.name}`);
-      
-      // Doğrudan download URL alın
-      const downloadURL = await getDownloadURL(storageRef);
-  
-      onSuccess(); // Başarılı yükleme olduğunu belirtin
-  
-      // downloadURL'yi kullanın (örneğin, state'e kaydedin veya üst düzey bileşene gönderin)
-      console.log('File download URL:', downloadURL);
-    } catch (error) {
-      console.error('File upload error:', error);
-      onSuccess(error); // Yükleme hatası olduğunu belirtin
-      alert('Dosya yükleme hatası: ' + error.message);
-    }
-  };
-
-
-
   return (
-    <Modal
-      visible={isOpen}
-      onCancel={onClose}
-      centered
-      footer={null}
-    >
+    <Modal visible={isOpen} onCancel={onClose} centered footer={null}>
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px', marginTop:'20px' }}>
-          Ekle <ArrowRightOutlined /> "{selectedCategory}"
+        <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>
+          Add Content to {selectedCategory}
         </h2>
 
-        <Upload
-          {...uploadProps}
-          customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
-          onChange={handleChange}
-          fileList={fileList}
-        >
-          <Button style={{ marginBottom: "10px" }} icon={<UploadOutlined />}>Resim Seçin</Button>
+        <Upload {...uploadProps} onChange={handleChange}>
+          <Button icon={<UploadOutlined />}>Select File</Button>
         </Upload>
 
         <Input
-          placeholder="Ürün İsmi"
+          placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
 
         <Input
-          placeholder="Ürün Fiyatı"
+          placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
 
         <Input
-          placeholder="İsteğe Bağlı Açıklama Girebilirsiniz"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
 
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <Button
-            type="primary"
-            style={{ background: 'green', marginRight: '10px' }}
-            onClick={handleAdd}
-          >
-            Ürünü Ekle
+          <Button type="primary" style={{ background: 'green', marginRight: '10px' }} onClick={handleAdd}>
+            Add
           </Button>
-          <Button
-            danger
-            onClick={onClose}
-          >
-            Vazgeç
+          <Button danger onClick={onClose}>
+            Cancel
           </Button>
         </div>
       </div>
