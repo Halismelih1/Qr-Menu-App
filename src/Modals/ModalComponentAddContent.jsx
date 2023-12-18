@@ -20,52 +20,18 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
     setFileList(fileList);
   };
 
-  const handleAdd = async () => {
-    if (!name.trim() || !price.trim()) {
-      console.error('Lütfen tüm zorunlu alanları doldurunuz.');
-      return;
-    }
-
-    if (fileList.length === 0) {
-      message.error('Lütfen bir dosya seçin.');
-      return;
-    }
-
-    try {
-      // Dosya adını belirleme
-      const selectedFile = fileList[0].originFileObj;
-      const storageRef = ref(storage, `images/${selectedFile.name}`);
-
-      // Dosyayı Firebase Storage'a yükleme
-      await uploadBytes(storageRef, selectedFile);
-
-      // Dosyanın URL'sini alma
-      const downloadURL = await getDownloadURL(storageRef);
-
-      // İçeriği eklemek için onAdd fonksiyonunu kullanma
-      onAdd({
-        name: name,
-        price: price,
-        description: description,
-        picture: downloadURL,
-      });
-
-      // State değerlerini sıfırla
-      setName('');
-      setPrice('');
-      setDescription('');
-      setFileList([]);
-
-      // Modal'ı kapat
-      onClose();
-    } catch (error) {
-      console.error('Dosya yükleme hatası:', error);
-      message.error('Dosya yükleme hatası: ' + error.message);
-    }
-  };
+  
 
   const uploadProps = {
     beforeUpload: (file) => {
+      const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      const isFileTypeAllowed = allowedFileTypes.includes(file.type);
+
+      if (!isFileTypeAllowed) {
+        message.error('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.');
+        return false;
+      }
+
       // Dosya seçilmediyse işlemi iptal et
       if (!file) {
         return false;
@@ -100,6 +66,64 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd,selectedCategory  }) 
     }
   };
 
+
+
+
+ 
+
+  const handleAdd = async () => {
+    if (!name.trim() || !price.trim()) {
+      console.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      return;
+    }
+
+    if (fileList.length === 0) {
+      message.error('Lütfen bir dosya seçin.');
+      return;
+    }
+
+    const selectedFile = fileList[0].originFileObj;
+
+    try {
+      // Doğru dosya türlerini kontrol etme
+      const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedFileTypes.includes(selectedFile.type)) {
+        message.error('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.');
+        return;
+      }
+
+      // Dosya adını belirleme
+      const storageRef = ref(storage, `images/${selectedFile.name}`);
+
+      // Dosyayı Firebase Storage'a yükleme
+      await uploadBytes(storageRef, selectedFile);
+
+      // Dosyanın URL'sini alma
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // İçeriği eklemek için onAdd fonksiyonunu kullanma
+      onAdd({
+        name: name,
+        price: price,
+        description: description,
+        picture: downloadURL,
+      });
+
+      // State değerlerini sıfırla
+      setName('');
+      setPrice('');
+      setDescription('');
+      setFileList([]);
+
+      // Modal'ı kapat
+      onClose();
+    } catch (error) {
+      console.error('Dosya yükleme hatası:', error);
+      message.error('Dosya yükleme hatası: ' + error.message);
+    }
+  };
+
+ 
 
 
   return (
