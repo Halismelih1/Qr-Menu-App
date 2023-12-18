@@ -40,7 +40,7 @@ const Admin = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      message.success('Çıkış başarılı.');
+      message.info('Çıkış yapıldı.');
       navigate('/');
     } catch (error) {
       message.error('Çıkış yapılırken bir hata oluştu.');

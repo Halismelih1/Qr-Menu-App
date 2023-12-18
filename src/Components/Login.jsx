@@ -25,9 +25,9 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       navigate('/admin');
-      message.success('Giriş Başarılı',2)
-    } catch (error) {
-      message.error('Giriş Bilgilerinizi Kontrol Edin',2);
+      message.loading("Login..")    }
+      catch (error) {
+      message.error('Giriş Bilgilerinizi Kontrol Edin',1);
     }
   };
   useEffect(() => {
