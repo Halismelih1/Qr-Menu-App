@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Input, Button,Upload,message } from 'antd';
-import { UploadOutlined, ArrowRightOutlined} from '@ant-design/icons';
+import { Modal, Input, Button, Upload, message } from 'antd';
+import { UploadOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
-import { ref, getDownloadURL,uploadBytesResumable   } from 'firebase/storage';
-
-
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   if (!content) {
@@ -15,7 +13,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [newName, setNewName] = useState(content.name || '');
   const [newPrice, setNewPrice] = useState(content.price || '');
   const [newDescription, setNewDescription] = useState(content.description || '');
-  const [newPicture, setNewPicture] = useState(content.picture || ''); 
+  const [newPicture, setNewPicture] = useState(content.picture || '');
 
   const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -80,18 +78,21 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   };
 
   const handleSave = () => {
+    // Validation for required fields
+    if (!newName.trim() || !newPrice.trim() || !newPicture) {
+      message.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      return;
+    }
+
     onSave({
       id: content.id,
       name: newName,
       price: newPrice,
       description: newDescription,
-      picture: newPicture 
+      picture: newPicture,
     });
     onClose();
   };
-  
-
-
 
   return (
     <Modal
@@ -101,7 +102,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       footer={null}
     >
       <hr /> <br />
-      <div style={{ marginBottom: '10px',display:"flex", alignItems:"center" }}>
+      <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
         <label style={{ marginBottom: '2px' }}>Mevcut Resim <ArrowRightOutlined /></label>
         {newPicture && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -150,7 +151,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           type="primary"
-          style={{background:"green", marginRight: '10px' }}
+          style={{ background: 'green', marginRight: '10px' }}
           onClick={handleSave}
         >
           Güncelle
