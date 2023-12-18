@@ -11,14 +11,17 @@ function PrivateRoute({ element }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      if (!user) {
+        // Eğer kullanıcı yoksa, /login sayfasına yönlendir
+        navigate('/login');
+      }
     });
 
+    // Temizlik işlemi
     return () => unsubscribe();
-  }, []);
+  }, [navigate]); 
 
-
-  return user ? element : navigate('/login');
-  
+  return user ? element : null; // Eğer kullanıcı varsa, element'i render et
 }
 
 export default PrivateRoute;

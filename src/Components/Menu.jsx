@@ -1,15 +1,9 @@
 // src/Components/Menu.jsx
 import React, { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Menu as AntMenu, Drawer, Button, Row, Col, Card } from 'antd';
+import { Menu as AntMenu, Drawer, Button, Row, Col, Card,message } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 
-
-
-
 const { SubMenu } = AntMenu;
-
 
 const Menu = ({ categoryItems, categories }) => {
 
@@ -21,11 +15,8 @@ const Menu = ({ categoryItems, categories }) => {
 
   useEffect(() => {
     setFilteredItems([]);
-    toast.success('Hoşgeldiniz!', {
-      position: 'bottom-right',
-      autoClose: 3000,
-      closeOnClick: false,
-    });
+    message.success('Hoşgeldiniz!',2
+     );
   }, []);
 
   const filterItemsByCategory = (category) => {
@@ -57,18 +48,18 @@ const Menu = ({ categoryItems, categories }) => {
 
   const cardStyle = {
     width: '100%',
-    height: '100%', // Kartın sabit yüksekliği
+    height: '100%', 
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     border: '1px solid #ddd',
-    overflow: 'hidden', // Kart içeriğini sınırlamak için
+    overflow: 'hidden', 
   };
 
 
 
   
   return (
-<div className="min-h-screen text-gray-800 p-4" style={{
+    <div className="min-h-screen text-gray-800 p-4" style={{
       backgroundImage: `url(/assets/menubg.png)`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -92,7 +83,7 @@ const Menu = ({ categoryItems, categories }) => {
           placement="left"
           closable={false}
           onClose={onClose}
-          visible={drawerOpen}
+          open={drawerOpen}
         >
           <AntMenu
             mode="vertical"
@@ -100,9 +91,9 @@ const Menu = ({ categoryItems, categories }) => {
             selectedKeys={selectedCategory ? [selectedCategory] : []}
             style={{ width: '100%' }}
           >
-            {categories.map((category) => (
+            {categories.map((category,i) => (
               <AntMenu.Item
-                key={category}
+                key={i}
                 onClick={() => handleCategoryClick(category)}
               >
                 {category}
@@ -116,8 +107,8 @@ const Menu = ({ categoryItems, categories }) => {
 {filteredItems.length > 0 ? (
   <Col span={24}>
     <Row gutter={[16, 16]}>
-      {filteredItems.map((item) => (
-        <Col key={item.id} xs={24} sm={12} md={12} lg={12}>
+      {filteredItems.map((item,i) => (
+        <Col key={i} xs={24} sm={12} md={12} lg={12}>
           <Card
             hoverable
             style={cardStyle}
@@ -128,8 +119,8 @@ const Menu = ({ categoryItems, categories }) => {
                   src={item.picture}
                   style={{
                     objectFit: 'cover',
-                    width: '100%', // Resim genişliği
-                    height: '170px', // Resim yüksekliği
+                    width: '100%', 
+                    height: '170px', 
                   }}
                 />
               )

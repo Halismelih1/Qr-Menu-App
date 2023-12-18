@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, onAuthStateChanged,getAuth } from 'firebase/auth';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Form, Input, Button} from 'antd';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { Form, Input, Button,message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 
@@ -16,12 +14,10 @@ const Login = () => {
 
 
   useEffect(() => {
-    // Firebase Authentication'da oturum durumu değiştiğinde çalışacak olan fonksiyon
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
 
-    // Component unmount olduğunda listener'ı temizleme
     return () => unsubscribe();
   }, []);
 
@@ -29,9 +25,9 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       navigate('/admin');
+      message.success('Giriş Başarılı',2)
     } catch (error) {
-      console.error('Giriş hatası:', error);
-      toast.warning('Giriş Bilgilerinizi Kontrol Edin');
+      message.error('Giriş Bilgilerinizi Kontrol Edin',2);
     }
   };
   useEffect(() => {
@@ -78,7 +74,6 @@ const Login = () => {
 </Form.Item>
         </Form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -431,8 +431,8 @@ const Admin = () => {
       </header>
       <div className="mb-8 flex flex-col md:flex-row">
       <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
-    {categories.map((category) => (
-            <div key={category} className="flex items-center mb-4 m-8 justify-between">
+    {categories.map((category,i) => (
+            <div key={i} className="flex items-center mb-4 m-8 justify-between">
             <Button
           type="primary"
           onClick={() => handleCategoryClick(category)}
@@ -470,9 +470,9 @@ const Admin = () => {
   <hr />
   
   <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(Array.isArray(adminData) ? adminData : []).map((item) => (
+        {(Array.isArray(adminData) ? adminData : []).map((item,i) => (
           <Card
-            key={item.id}
+            key={i}
             style={{ width: '100%'}}
             cover={
               item.picture ? (
@@ -510,7 +510,7 @@ const Admin = () => {
               title={<span>{item.name}</span>}
               description={<p className='mb-2'> <span className='font-bold'>Açıklama:</span>{item.description || 'Bu ürün için bir açıklama bulunamadı.'}</p>}
             />
-            <p>Fiyat: {item.price}&#8378;</p>
+            <p>Fiyat: {item.price} &#8378;</p>
           </Card>
         ))}
       </div>
