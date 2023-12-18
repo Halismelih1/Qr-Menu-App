@@ -38,7 +38,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
       // Doğru dosya türlerini kontrol etme
       const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedFileTypes.includes(selectedFile.type)) {
-        message.warning('Sadece PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.',2);
+        message.warning('Sadece JPG, PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.',2);
         return;
       }
 

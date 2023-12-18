@@ -5,15 +5,18 @@ import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
+
   const [categoryName, setCategoryName] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState(null);
 
+
+
   const handleSave = async () => {
     if (!categoryName.trim() || !name.trim() || !price.trim() || !imageFile) {
-      message.error('Lütfen tüm zorunlu alanları doldurunuz.');
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.',2);
       return;
     }
 
@@ -46,18 +49,17 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        message.error('Sadece resim dosyalarını yükleyebilirsiniz.');
+        message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).',2);
         return false;
       }
 
       setImageFile(file);
-      return false; // false döndüğünüzde, antd Upload component'i dosyayı otomatik olarak yüklemeyecek
+      return false; 
     },
   };
 
   const handleImageUpload = async (file, onSuccess) => {
     if (!file) {
-      console.error('Dosya bilgisi bulunamadı.');
       onSuccess(new Error('Dosya bilgisi bulunamadı.'));
       return;
     }
@@ -70,11 +72,12 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
 
       onSuccess(); // Başarılı yükleme durumu
     } catch (error) {
-      console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
-      message.error('Dosya yükleme hatası: ' + error.message);
+      message.error('Dosya yükleme hatası lütfen tekrar deneyin');
     }
   };
+
+
 
   return (
     <Modal
@@ -82,20 +85,20 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       onCancel={onClose}
       title="Kategori Ekleme"
       footer={null}
+      style={{textAlign:"center"}}
     >
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
-          style={{ marginBottom: '10px' }}
           placeholder='Kategori İsmi'
         />
       </div>
-      <h3>{<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}</h3>
+      <h3 className='mt-6 text-center font-bold'>{<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}</h3>
       <hr /> <br />
-
+  
       <div style={{ marginBottom: '10px' }}>
-        <label className='mr-2'>Dosya:</label>
+        <label style={{ marginRight: '10px' }}>Resim :</label>
         <Upload
           {...uploadProps}
           customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
@@ -103,34 +106,31 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
           <Button icon={<UploadOutlined />}>Ekleyeceğiniz Ürün İçin Resim seçin</Button>
         </Upload>
       </div>
-
+  
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ marginBottom: '10px' }}
           placeholder='Ürün İsmi'
         />
       </div>
-
+  
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          style={{ marginBottom: '10px' }}
           placeholder='Ürün Fiyatı'
         />
       </div>
-
+  
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{ marginBottom: '10px' }}
           placeholder='İsteğe Bağlı Açıklama Girebilirsiniz..'
         />
       </div>
-
+  
       <div style={{ marginBottom: '10px', textAlign: 'center' }}>
         <Button
           type="primary"
@@ -139,7 +139,7 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
         >
           Kategoriyi Kaydet
         </Button>
-
+  
         <Button
           danger
           onClick={onClose}
