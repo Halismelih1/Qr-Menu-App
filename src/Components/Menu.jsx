@@ -69,7 +69,7 @@ const Menu = ({ categoryItems, categories }) => {
   
   return (
 <div className="min-h-screen text-gray-800 p-4" style={{
-      backgroundImage: `url(/assets/3.png)`,
+      backgroundImage: `url(/assets/menubg.png)`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }}>

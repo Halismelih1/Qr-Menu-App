@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Input, Button,Upload } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Modal, Input, Button,Upload,message } from 'antd';
+import { UploadOutlined, ArrowRightOutlined} from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
-import { ref, getDownloadURL,deleteObject  } from 'firebase/storage';
+import { ref, getDownloadURL,uploadBytesResumable   } from 'firebase/storage';
 
 
 
@@ -16,45 +16,16 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
   const [newPrice, setNewPrice] = useState(content.price || '');
   const [newDescription, setNewDescription] = useState(content.description || '');
   const [newPicture, setNewPicture] = useState(content.picture || ''); 
-  const [imagePath, setImagePath] = useState(content.picture || ''); // Store image path separately
 
+  const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
-
-  const handleSave = () => {
-    onSave({
-      id: content.id,
-      name: newName,
-      price: newPrice,
-      description: newDescription,
-      picture: newPicture,
-    });
-    onClose();
-  };
-
-  const handleRemovePicture = async () => {
-    if (imagePath) {
-      try {
-        // Get a reference to the file in storage
-        const imageRef = ref(storage, imagePath);
-
-        // Delete the file from storage
-        await deleteObject(imageRef);
-
-        // Set the picture state to an empty string
-        setNewPicture('');
-
-        console.log('Image successfully deleted from storage.');
-      } catch (error) {
-        console.error('Error deleting image from storage:', error);
-        alert('Resim silme hatası: ' + error.message);
-      }
+  const beforeUpload = (file) => {
+    // Dosya türünü kontrol et
+    const isImage = allowedFileTypes.includes(file.type);
+    if (!isImage) {
+      message.error('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).');
     }
-  };
-
-
-  const uploadProps = {
-    customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
-    showUploadList: false, // Dosya listesini gizle
+    return isImage;
   };
 
   const handleImageUpload = async (file, onSuccess) => {
@@ -65,22 +36,60 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     }
 
     try {
-    
       const storageRef = ref(storage, `images/${file.name}`);
 
-      // Doğrudan download URL alın
-      const downloadURL = await getDownloadURL(storageRef);
+      // Eğer mevcut resim varsa, silme işlemi yapma
 
-      onSuccess(); // Başarılı yükleme durumu
+      // Yeni dosyayı yükle
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-    
-      setNewPicture(downloadURL);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Yükleme ilerleme durumu
+        },
+        (error) => {
+          // Yükleme hatası durumu
+          console.error('File upload error:', error);
+          onSuccess(error);
+          alert('Dosya yükleme hatası: ' + error.message);
+        },
+        async () => {
+          // Yükleme tamamlandığında
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          onSuccess();
+          setNewPicture(downloadURL);
+        }
+      );
     } catch (error) {
       console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
       alert('Dosya yükleme hatası: ' + error.message);
     }
   };
+  const uploadProps = {
+    customRequest: ({ file, onSuccess }) => handleImageUpload(file, onSuccess),
+    beforeUpload,
+    showUploadList: false, // Dosya listesini gizle
+  };
+
+  const handleCancel = () => {
+    // Eğer kullanıcı işlemi iptal ederse, resmi güncelleme
+    setNewPicture(content.picture || '');
+    onClose();
+  };
+
+  const handleSave = () => {
+    onSave({
+      id: content.id,
+      name: newName,
+      price: newPrice,
+      description: newDescription,
+      picture: newPicture 
+    });
+    onClose();
+  };
+  
 
 
 
@@ -88,13 +97,12 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     <Modal
       visible={isOpen}
       onCancel={onClose}
-      title="Edit Content"
+      title="Ürün Düzenleme"
       footer={null}
     >
-      <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>Edit Content</h2>
-
-      <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Picture:</label>
+      <hr /> <br />
+      <div style={{ marginBottom: '10px',display:"flex", alignItems:"center" }}>
+        <label style={{ marginBottom: '2px' }}>Mevcut Resim <ArrowRightOutlined /></label>
         {newPicture && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <img
@@ -102,22 +110,15 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
               alt="Content"
               style={{ maxWidth: '100px', marginRight: '10px' }}
             />
-            <Button
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={handleRemovePicture}
-            >
-              Remove Picture
-            </Button>
           </div>
         )}
         <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />}>Select File</Button>
+          <Button icon={<UploadOutlined />}>Yeni Resim</Button>
         </Upload>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Name:</label>
+        <label style={{ marginBottom: '2px' }}>Ürün İsmi:</label>
         <Input
           type="text"
           value={newName}
@@ -127,7 +128,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Price:</label>
+        <label style={{ marginBottom: '2px' }}>Ürün Fiyatı:</label>
         <Input
           type="text"
           value={newPrice}
@@ -137,7 +138,7 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '2px' }}>Description:</label>
+        <label style={{ marginBottom: '2px' }}>Açıklama:</label>
         <Input
           type="text"
           value={newDescription}
@@ -156,9 +157,9 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
         </Button>
         <Button
           danger
-          onClick={onClose}
+          onClick={handleCancel}
         >
-          Cancel
+          Vazgeç
         </Button>
       </div>
     </Modal>

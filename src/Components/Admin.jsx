@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import { Button, Card,Typography } from 'antd';
-import { LogoutOutlined, FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
+import { LogoutOutlined,HomeOutlined ,FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 const { Meta } = Card;
@@ -107,14 +107,18 @@ const Admin = () => {
   const handleModalAddCategorySave = async ({ category, name, price, description,picture }) => {
     try {
       if (!category.trim() || !name.trim() || !price.trim()) {
-        console.error('Geçersiz bilgi girişi.');
+        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
+          autoClose: 1000,
+        });
         return;
       }
 
       const categoryExists = categories.map(c => c.toLowerCase()).includes(category.toLowerCase());
       if (categoryExists) {
         // Aynı isimde bir kategori zaten varsa uyarı ver
-        alert('Bu isimde bir kategori zaten var. Başka bir isim seçin.');
+        toast.info('Lütfen Tüm Zorunlu Alanları Doldurunuz !', {
+          autoClose: 1000,
+        });
         return;
       }
 
@@ -126,11 +130,15 @@ const Admin = () => {
         description: description,
         picture:picture
       });
+      
 
       // Verileri tekrar çekme işlemi
       fetchData();
 
-      toast.success('İçerik başarıyla eklendi.');
+      toast.success('İçerik başarıyla eklendi.', {
+        autoClose: 1000,
+      });
+
       setAddCategoryModalIsOpen(false);
     } catch (error) {
       console.error('İçerik ekleme hatası:', error);
@@ -159,18 +167,19 @@ const Admin = () => {
   
               const batch = writeBatch(db);
   
-              categorySnapshot.forEach((categoryDoc) => {
+              categorySnapshot.forEach(async (categoryDoc) => {
                 const docRef = doc(db, 'Menu', categoryDoc.id);
                 batch.delete(docRef);
   
                 const imagePath = categoryDoc.data().picture;
                 if (imagePath) {
                   const imageRef = ref(storage, imagePath);
-                  deleteObject(imageRef).then(() => {
-        
-                  }).catch((error) => {
+                  try {
+                    await deleteObject(imageRef);
+                    // Image deleted successfully
+                  } catch (error) {
                     console.error('Error deleting image from storage:', error);
-                  });
+                  }
                 }
               });
   
@@ -179,8 +188,10 @@ const Admin = () => {
               // Kategorileri ve içerikleri tekrar çekme işlemi
               fetchData();
   
-              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`);
-
+              toast.success(`"${category}" kategorisi ve ilgili içerikleri başarıyla silindi.`, {
+                autoClose: 1000,
+              });
+  
             } catch (error) {
               console.error('Kategori silme hatası:', error);
               toast.error('Kategori silme işlemi başarısız oldu.');
@@ -216,6 +227,8 @@ const Admin = () => {
       const updateData = {
         name,
         price,
+        description,
+        picture,
       };
   
       // Eğer yeni açıklama varsa, onu da güncelleme verisine ekleme
@@ -233,7 +246,10 @@ const Admin = () => {
       // Verileri tekrar çekme işlemi
       handleCategoryClick(selectedCategory);
   
-      toast.success('İçerik başarıyla güncellendi.');
+      toast.success('İçerik başarıyla güncellendi.',{
+        autoClose:1000
+      });
+
     } catch (error) {
       console.error('İçerik güncelleme hatası:', error);
       toast.error('İçerik güncelleme işlemi başarısız oldu.');
@@ -266,6 +282,7 @@ const Admin = () => {
   
               // Verileri tekrar çekme işlemi
               fetchData();
+
   
               toast.success('İçerik başarıyla silindi.');
             } catch (error) {
@@ -351,8 +368,12 @@ const Admin = () => {
   
       // Kategorileri tekrar çekme işlemi
       fetchData();
+
+      
   
-      toast.success('Category successfully updated.');
+      toast.success('Category successfully updated.', {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error('Category update error:', error);
       toast.error('Category update failed.');
@@ -362,31 +383,56 @@ const Admin = () => {
     }
   };
 
+  const navigateHome = ()=>{
+    navigate("/")
+  }
+
 
 
   return (
     <div className="container min-h-screen overflow-y-hidden mx-auto mt-8 p-4">
       <header className="flex flex-col md:flex-row justify-between items-center mb-8">
         <div className="mb-4 md:mb-0">
-          <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left">
-            Welcome, {user.email}!
+          <h1 className="text-3xl font-bold mb-4 mt-8 text-center md:text-left" style={{
+                     color: ' black',
+                    
+          }}>
+           Admin: {user.email}!
           </h1>
+          <hr /> <br />
         </div>
         <Button
         onClick={handleAddCategory}
         style={{
           color: 'green',
           fontWeight: 'bold',
-          marginBottom:'4px'
+          marginBottom:'4px',
+          width:"100%",
+          borderRadius:"50px"
         }}
         icon={<FileAddOutlined />}
       >
-        Add Category
+        Kategori Ekle
+      </Button>
+      <Button
+        onClick={navigateHome}
+        style={{
+          color: '#008B8B',
+          fontWeight: 'bold',
+          marginBottom:'4px',
+          width:"100%",
+          borderRadius:"50px"
+        }}
+        icon={<HomeOutlined />}
+      >
+        Anasayfa
       </Button>
         <Button
           icon={<LogoutOutlined />}
           onClick={handleSignOut}
-          style={{ color: '#FF0000', fontWeight: 'bold' }}
+          style={{ color: '#FF0000', fontWeight: 'bold', width:"100%",
+          borderRadius:"50px" }}
+          
         >
           Çıkış Yap
         </Button>
@@ -401,10 +447,13 @@ const Admin = () => {
           style={{
             width: '120px',
             height: '40px',
-            backgroundColor: '#1890ff',
-            borderColor: '#1890ff',
+            backgroundColor: '#FFA500',
+            borderColor: 'black',
             marginRight: '8px',
-            borderBottom: '2px solid black'
+            borderBottom: '4px solid black',
+            color:"black",
+            
+            
           }}
         >
           {category}
@@ -426,12 +475,13 @@ const Admin = () => {
   </div>
 ))}
   </div>
+  <hr />
   
   <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(Array.isArray(adminData) ? adminData : []).map((item) => (
           <Card
             key={item.id}
-            style={{ width: '100%' }}
+            style={{ width: '100%'}}
             cover={
               item.picture ? (
                 <img
@@ -444,7 +494,7 @@ const Admin = () => {
                   }}
                 />
               ) : (
-                <div className="no-image-placeholder">
+                <div className="text-center mt-4">
                   Bu ürün için eklenmiş bir resim bulunmamaktadır.
                 </div>
               )
@@ -453,18 +503,22 @@ const Admin = () => {
               <EditOutlined
                 key="edit"
                 onClick={() => handleEditContent(item)}
+                style={{ color: 'blue' }}
+
               />,
               <DeleteOutlined
                 key="delete"
                 onClick={() => handleDeleteContent(item.id, item.name)}
+                style={{ color: 'red' }}
+
               />,
             ]}
           >
             <Meta
               title={<span>{item.name}</span>}
-              description={<span>Açıklama: {item.description || 'Bu ürün için bir açıklama bulunamadı.'}</span>}
+              description={<p className='mb-2'> <span className='font-bold'>Açıklama:</span>{item.description || 'Bu ürün için bir açıklama bulunamadı.'}</p>}
             />
-            <p>Fiyat: &#8378;{item.price}</p>
+            <p>Fiyat: {item.price}&#8378;</p>
           </Card>
         ))}
       </div>
@@ -493,12 +547,14 @@ const Admin = () => {
         onSave={handleModalAddCategorySave}
       />
   
-      <ModalComponentEditContent
-        isOpen={editModalIsOpen}
-        onClose={handleModalEditClose}
-        onSave={handleModalEditSave}
-        content={editingContent}
-      />
+  {editingContent && (
+  <ModalComponentEditContent
+    isOpen={editModalIsOpen}
+    onClose={handleModalEditClose}
+    onSave={handleModalEditSave}
+    content={editingContent}
+  />
+)}
   
       <ToastContainer />
     </div>
