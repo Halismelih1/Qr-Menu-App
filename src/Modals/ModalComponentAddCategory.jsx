@@ -1,27 +1,25 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button, Upload, message } from 'antd';
-import { UploadOutlined,ArrowDownOutlined } from '@ant-design/icons';
+import { UploadOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { toast } from 'react-toastify';
 
 const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
   const [categoryName, setCategoryName] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [imageFile, setImageFile] = useState({ id: null, file: null });
-  
+  const [imageFile, setImageFile] = useState(null);
 
   const handleSave = async () => {
-    if (!categoryName.trim() || !name.trim() || !price.trim() || !imageFile.file) {
-      toast.error('Lütfen tüm zorunlu alanları doldurunuz.');
+    if (!categoryName.trim() || !name.trim() || !price.trim() || !imageFile) {
+      message.error('Lütfen tüm zorunlu alanları doldurunuz.');
       return;
     }
 
-    //Firebase Storage resim yükleme
-    const storageRef = ref(storage, `images/${imageFile.id}${imageFile.file.name}`);
-    await uploadBytes(storageRef, imageFile.file);
+    // Firebase Storage resim yükleme
+    const storageRef = ref(storage, `images/${imageFile.uid}${imageFile.name}`);
+    await uploadBytes(storageRef, imageFile);
 
     // image URL Alma
     const downloadURL = await getDownloadURL(storageRef);
@@ -34,20 +32,26 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       picture: downloadURL,
     });
 
-    //değerleri temizle
+    // değerleri temizle
     setCategoryName('');
     setName('');
     setPrice('');
     setDescription('');
-    setImageFile({ id: null, file: null }); // id ve file'ı sıfırla
+    setImageFile(null);
 
     onClose();
   };
 
   const uploadProps = {
     beforeUpload: (file) => {
-      setImageFile({ id: Math.random().toString(36).substring(7), file: file }); // id'yi rastgele bir değer olarak atadık
-      return false; // false döndürerek antd'nin otomatik yükleme işlemini iptal etme
+      const isImage = file.type.startsWith('image/');
+      if (!isImage) {
+        message.error('Sadece resim dosyalarını yükleyebilirsiniz.');
+        return false;
+      }
+
+      setImageFile(file);
+      return false; // false döndüğünüzde, antd Upload component'i dosyayı otomatik olarak yüklemeyecek
     },
   };
 
@@ -57,25 +61,20 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       onSuccess(new Error('Dosya bilgisi bulunamadı.'));
       return;
     }
-  
+
     try {
       const storageRef = ref(storage, `images/${file.name}`);
-      
+
       // Doğrudan download URL alma
-      const downloadURL = await getDownloadURL(storageRef);
+      await getDownloadURL(storageRef);
 
-      console.log('File download URL:', downloadURL);
-
-  
       onSuccess(); // Başarılı yükleme durumu
-  
     } catch (error) {
       console.error('File upload error:', error);
       onSuccess(error); // Yükleme hatası durumu
-      alert('Dosya yükleme hatası: ' + error.message);
+      message.error('Dosya yükleme hatası: ' + error.message);
     }
   };
-
 
   return (
     <Modal
@@ -94,7 +93,6 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       </div>
       <h3>{<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}</h3>
       <hr /> <br />
-      
 
       <div style={{ marginBottom: '10px' }}>
         <label className='mr-2'>Dosya:</label>
@@ -120,7 +118,7 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           style={{ marginBottom: '10px' }}
-            placeholder='Ürün Fiyatı'
+          placeholder='Ürün Fiyatı'
         />
       </div>
 
@@ -134,23 +132,23 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       </div>
 
       <div style={{ marginBottom: '10px', textAlign: 'center' }}>
-      <Button
-        type="primary"
-        style={{ background: 'green', marginRight: '10px' }}
-        onClick={handleSave}
-      >
-        Kategoriyi Kaydet
-      </Button>
+        <Button
+          type="primary"
+          style={{ background: 'green', marginRight: '10px' }}
+          onClick={handleSave}
+        >
+          Kategoriyi Kaydet
+        </Button>
 
-      <Button
-        danger
-        onClick={onClose}
-      >
-        Vazgeç
-      </Button>
-    </div>
-  </Modal>
-);
+        <Button
+          danger
+          onClick={onClose}
+        >
+          Vazgeç
+        </Button>
+      </div>
+    </Modal>
+  );
 };
 
 export default ModalComponentAddCategory;
