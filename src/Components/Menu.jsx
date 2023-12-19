@@ -159,7 +159,7 @@ const Menu = ({ categoryItems, categories }) => {
                   >
                     <div style={{ marginBottom: '16px', flex: 1, borderRadius: '10px', overflow: 'hidden' }}>
                       {item.picture && (
-                        <LazyLoad height={200} offset={100} once>
+                        
                           <img
                             alt={item.name}
                             src={item.picture}
@@ -169,7 +169,7 @@ const Menu = ({ categoryItems, categories }) => {
                               height: '100%',
                             }}
                           />
-                        </LazyLoad>
+                        
                       )}
                     </div>
                     <div style={{ flex: 1 }}>
