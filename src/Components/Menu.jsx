@@ -1,7 +1,9 @@
 // src/Components/Menu.jsx
 import React, { useEffect, useState } from 'react';
-import { Menu as AntMenu, Drawer, Button, Row, Col, Card,message } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { Menu as AntMenu, Drawer, Button, Row, Col, Card,message,Collapse } from 'antd';
+import { MenuOutlined,FilterOutlined } from '@ant-design/icons';
+import LazyLoad from 'react-lazy-load';
+
 
 const { SubMenu } = AntMenu;
 
@@ -11,6 +13,15 @@ const Menu = ({ categoryItems, categories }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
+  const [expandedDescription, setExpandedDescription] = useState(null);
+
+
+  const { Panel } = Collapse;
+
+  const handleDescriptionClick = (index) => {
+    setExpandedDescription(expandedDescription === index ? null : index);
+  }
+
 
 
 
@@ -81,7 +92,7 @@ const Menu = ({ categoryItems, categories }) => {
             type="primary"
             onClick={showDrawer}
             className="mt-12 ml-2"
-            style={{ backgroundColor: 'white', borderColor: '#ffffff', color:"black" }}
+            style={{ backgroundColor: 'white', borderColor: 'black', color:"black" }}
             icon={<MenuOutlined />}
           >
             Kategoriler
@@ -105,8 +116,14 @@ const Menu = ({ categoryItems, categories }) => {
               <AntMenu.Item
                 key={i}
                 onClick={() => handleCategoryClick(category)}
+                style={{borderLeft:"2px solid black",
+                textAlign:"center", 
+                marginBottom:"20px",
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              }}
               >
-                {category}
+                <FilterOutlined /> {category}
+                 
               </AntMenu.Item>
             ))}
           </AntMenu>
@@ -114,29 +131,32 @@ const Menu = ({ categoryItems, categories }) => {
 
  
 
-{filteredItems.length > 0 ? (
+        {filteredItems.length > 0 ? (
   <Col span={24}>
     <Row gutter={[16, 16]}>
-      {filteredItems.map((item,i) => (
+      {filteredItems.map((item, i) => (
         <Col key={i} xs={24} sm={12} md={12} lg={12}>
           <Card
             hoverable
             style={cardStyle}
-            cover={
-              item.picture && (
-                <img
-                  alt={item.name}
-                  src={item.picture}
-                  style={{
-                    objectFit: 'cover',
-                    width: '100%', 
-                    height: '170px', 
-                  }}
-                />
-              )
-            }
+            bodyStyle={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
           >
-            <div style={{ padding: '16px', height: '100%' }}>
+            <div style={{ marginBottom: '16px', flex: 1, borderRadius: '10px', overflow: 'hidden' }}>
+              {item.picture && (
+                <LazyLoad height={200} offset={100} once>
+                  <img
+                    alt={item.name}
+                    src={item.picture}
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                </LazyLoad>
+              )}
+            </div>
+            <div style={{ flex: 1 }}>
               <h3
                 style={{
                   fontSize: '1.2rem',
@@ -157,11 +177,18 @@ const Menu = ({ categoryItems, categories }) => {
                 Fiyat: &#8378;{item.price}
               </p>
               {item.description && (
-                <p className="text-gray-600 mb-2">
-                  {item.description && item.description.length > 100
-                    ? `${item.description.substring(0, 100)}...`
-                    : item.description}
-                </p>
+                <Collapse accordion activeKey={expandedDescription}>
+                  <Panel
+                    key={i.toString()}
+                    header="Açıklama"
+                    onClick={() => handleDescriptionClick(i)}
+                    showArrow={true}
+                  >
+                    <p className="text-gray-600 mb-2">
+                      {item.description}
+                    </p>
+                  </Panel>
+                </Collapse>
               )}
             </div>
           </Card>

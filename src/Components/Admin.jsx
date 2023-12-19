@@ -12,7 +12,7 @@ import ModalComponentEditCategory from '../Modals/ModalComponetEditCategory'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import { Button, Card,Typography,message } from 'antd';
-import { LogoutOutlined,HomeOutlined ,FileAddOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
+import { LogoutOutlined,HomeOutlined ,FileAddOutlined,PushpinOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 const { Meta } = Card;
@@ -232,7 +232,6 @@ const Admin = () => {
             await deleteObject(oldImageRef);
             // Eski resim başarıyla silindi
           } catch (error) {
-            message.error('Error deleting old image from storage:', error);
           }
         }
       }
@@ -277,7 +276,7 @@ const Admin = () => {
                   await deleteObject(imageRef);
                   // Resim başarıyla silindi
                 } catch (error) {
-                  message.error('Storage\'dan resim silme hatası,tekrar deneyin');
+                  console.error('Storage\'dan resim silme hatası,tekrar deneyin');
                 }
               }
   
@@ -288,7 +287,7 @@ const Admin = () => {
   
               message.success('İçerik başarıyla silindi.',2);
             } catch (error) {
-              message.error('İçerik silme işlemi başarısız oldu.',2);
+              console.error('İçerik silme işlemi başarısız oldu.',2);
             }
           },
         },
@@ -433,23 +432,24 @@ const Admin = () => {
       <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
     {categories.map((category,i) => (
             <div key={i} className="flex items-center mb-4 m-8 justify-between">
+              <PushpinOutlined />
             <Button
           type="primary"
           onClick={() => handleCategoryClick(category)}
           style={{
             width: '120px',
             height: '40px',
-            backgroundColor: '#FFA500',
+            backgroundColor: '#ffffff',
             borderColor: 'black',
             marginRight: '8px',
             borderBottom: '4px solid black',
             color:"black",
-            
-            
           }}
+          
         >
           {category}
         </Button>
+        
         <div className="ml-2 flex items-center">
       <span
         className="cursor-pointer text-green-500"
