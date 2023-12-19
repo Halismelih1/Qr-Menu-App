@@ -102,27 +102,37 @@ const Menu = ({ categoryItems, categories }) => {
   >
       <Row justify="center" align="middle" gutter={[16, 16]}>
         <Col span={24}>
+          {selectedCategory &&
           <Button
-            type="primary"
-            onClick={showModal}
-            className="mt-12 ml-2"
-            style={{ backgroundColor: 'white', borderColor: 'black', color: 'black' }}
-            icon={<MenuOutlined />}
-          >
-            Kategoriler
-          </Button>
+          type="primary"
+          onClick={showModal}
+          className="mt-12 ml-2"
+          style={{ backgroundColor: 'white', borderColor: 'black', color: 'black' }}
+          icon={<MenuOutlined />}
+        >
+          Kategoriler
+        </Button>
+          }
+          
     
         </Col>
 
         <Modal
-        title="Kategoriler" 
-        visible={isModalVisible}
-        onCancel={handleModalCancel}
-        footer={null}
-        width="60%"
-        style={modalStyle}
-        className="modal-container"
-      >
+  title="Kategoriler" 
+  visible={isModalVisible}
+  footer={null}
+  width="60%"
+  style={{
+    ...modalStyle,
+    position: 'absolute',
+
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  }}
+  className="modal-container"
+  closable={false}
+>
           <AntMenu
             mode="vertical"
             defaultSelectedKeys={[]}
@@ -219,13 +229,3 @@ const Menu = ({ categoryItems, categories }) => {
 };
 
 export default Menu;
-
-
-
-
-
-
-
-
-
-
