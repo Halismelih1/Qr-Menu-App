@@ -65,45 +65,52 @@ const Menu = ({ categoryItems, categories }) => {
 
 
 
-
-
-
   
   return (
     <div
-    className={`min-h-screen text-gray-800 p-4 ${drawerOpen ? 'blur' : ''}`}
-    style={{
-      backgroundImage: hasSelectedCategory
-        ? 'url(/assets/categorybg.jpg)'
-        : `url(/assets/menubg.png)`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }}
-  >
-   <Row justify="center" align="middle" gutter={[16, 16]}>
-  <Col span={24}>
-  </Col>
-
-  <Drawer
-  title="Kategoriler"
-  placement="left"
-  closable={false}
-  open={drawerOpen}
-  style={{ padding: 0, textAlign: "center", background: "#F5FFFA" }}
-  width="60%"
-  destroyOnClose={true}
+  className={'min-h-screen text-gray-800 p-4 '}
+  style={{
+    backgroundImage: hasSelectedCategory
+      ? 'url(/assets/categorybg.jpg)'
+      : `url(/assets/menubg.png)`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }}
 >
-{categories
-  .map((category, i) => (
-    <Paragraph
-      style={{ margin: "15px", justifyContent: "center", fontSize: 16 }}
-      key={i}
-      onClick={() => handleCategoryClick(category)}
+  <Row justify="center" align="middle" gutter={[16, 16]}>
+    <Col span={24}></Col>
+
+    <Drawer
+      title={
+        <Title level={3} >
+          Kategoriler
+        </Title>
+      }
+      placement="left"
+      closable={false}
+      open={drawerOpen}
+      style={{ padding: 0, textAlign: 'center', background: 'rgba(255, 255, 255, 0.6)' }}
+      width="60%"
+      destroyOnClose={true}
     >
-      {category}
-    </Paragraph>
-  ))}
-</Drawer>;
+      {categories.map((category, i) => (
+         <Paragraph
+         style={{
+           margin: '15px',
+           justifyContent: 'center',
+           fontSize: '18',
+           fontFamily: 'Amatic SC, cursive',
+           color: 'black', 
+           fontWeight: 'bold', 
+           letterSpacing: '1px', 
+         }}
+         key={i}
+         onClick={() => handleCategoryClick(category)}
+       >
+         {category}
+       </Paragraph>
+      ))}
+    </Drawer>
    
         {filteredItems.length > 0 ? (
           <Col span={24}>
