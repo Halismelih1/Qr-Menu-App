@@ -19,45 +19,49 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
       message.warning('Lütfen tüm zorunlu alanları doldurunuz.', 2);
       return;
     }
-  
-    // Firebase Storage resim yükleme
-    const storageRef = ref(storage, `images/${imageFile.uid}${imageFile.name}`);
-    await uploadBytes(storageRef, imageFile);
-  
-    // image URL Alma
-    const downloadURL = await getDownloadURL(storageRef);
-  
-    // Kategori ismini küçük harfe dönüştürerek kontrol et
-    const categoryLowerCase = categoryName.toLowerCase();
-  
-    onSave({
-      category: categoryLowerCase,
-      name: name,
-      price: price,
-      description: description,
-      picture: downloadURL,
-    });
-  
-    // değerleri temizle
-    setCategoryName('');
-    setName('');
-    setPrice('');
-    setDescription('');
-    setImageFile(null);
-  
-    onClose();
+
+    try {
+      // Firebase Storage resim yükleme
+      const storageRef = ref(storage, `images/${imageFile.uid}${imageFile.name}`);
+      await uploadBytes(storageRef, imageFile);
+
+      // image URL Alma
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // Kategori ismini küçük harfe dönüştürerek kontrol et
+      const categoryLowerCase = categoryName.toLowerCase();
+
+      onSave({
+        category: categoryLowerCase,
+        name: name,
+        price: price,
+        description: description,
+        picture: downloadURL,
+      });
+
+      // değerleri temizle
+      setCategoryName('');
+      setName('');
+      setPrice('');
+      setDescription('');
+      setImageFile(null);
+
+      onClose();
+    } catch (error) {
+      message.error('Dosya yükleme hatası, lütfen tekrar deneyin', 2);
+    }
   };
 
   const uploadProps = {
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).',2);
+        message.warning('Lütfen geçerli bir resim dosyası seçin (jpg, jpeg, png).', 2);
         return false;
       }
 
       setImageFile(file);
-      return false; 
+      return false;
     },
   };
 
@@ -80,60 +84,91 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
     }
   };
 
+  const handleCancel = () => {
+    // State değerlerini sıfırla
+    setCategoryName('');
+    setName('');
+    setPrice('');
+    setDescription('');
+    setImageFile(null);
+  
+    // Modal'ı kapat
+    onClose();
+  };
 
 
   return (
     <Modal
-      visible={isOpen}
+      open={isOpen}
       onCancel={onClose}
       title="Kategori Ekleme"
       footer={null}
-      style={{textAlign:"center"}}
+      style={{ textAlign: 'center' }}
     >
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
-          placeholder='Kategori İsmi'
+          placeholder="Kategori İsmi"
         />
       </div>
-      <h3 className='mt-6 text-center font-bold'>{<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}</h3>
+      <h3 className="mt-6 text-center font-bold">
+        {<ArrowDownOutlined />} Kategoriniz İçin Ürün Oluşturun {<ArrowDownOutlined />}
+      </h3>
       <hr /> <br />
-  
-      <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginRight: '10px' }}>Resim :</label>
-        <Upload
-          {...uploadProps}
-          customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
+
+      <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+  <label style={{ marginRight: '10px' }}>Resim :</label>
+  <Upload
+    {...uploadProps}
+    customRequest={({ file, onSuccess }) => handleImageUpload(file, onSuccess)}
+    showUploadList={false}
+  >
+    {imageFile ? (
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img
+          src={URL.createObjectURL(imageFile)}
+          alt="Preview"
+          style={{ maxWidth: '100%', maxHeight: '100px', marginRight: '10px' }}
+        />
+        <Button
+          type="dashed"
+          style={{ background: 'rgba(255,255,255,0.7)' }}
+          icon={<UploadOutlined />}
         >
-          <Button icon={<UploadOutlined />}>Ekleyeceğiniz Ürün İçin Resim seçin</Button>
-        </Upload>
+          Resim Seç
+        </Button>
       </div>
-  
+    ) : (
+      <Button icon={<UploadOutlined />}>Ekleyeceğiniz Ürün İçin Resim Seçin</Button>
+    )}
+  </Upload>
+</div>
+
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder='Ürün İsmi'
+          placeholder="Ürün İsmi"
         />
       </div>
-  
+
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          placeholder='Ürün Fiyatı'
+          placeholder="Ürün Fiyatı"
         />
       </div>
-  
+
       <div style={{ marginBottom: '10px' }}>
         <Input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder='İsteğe Bağlı Açıklama Girebilirsiniz..'
+          placeholder="İsteğe Bağlı Açıklama Girebilirsiniz.."
         />
       </div>
-  
+
       <div style={{ marginBottom: '10px', textAlign: 'center' }}>
         <Button
           type="primary"
@@ -142,11 +177,8 @@ const ModalComponentAddCategory = ({ isOpen, onClose, onSave }) => {
         >
           Kategoriyi Kaydet
         </Button>
-  
-        <Button
-          danger
-          onClick={onClose}
-        >
+
+        <Button danger onClick={handleCancel}>
           Vazgeç
         </Button>
       </div>

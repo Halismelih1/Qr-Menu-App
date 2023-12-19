@@ -9,44 +9,32 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [fileList, setFileList] = useState([]);
+  const [file, setFile] = useState(null);
 
 
 
-  const handleChange = ({ fileList }) => {
-
-    if (!fileList || fileList.length === 0) {
+  const handleChange = (info) => {
+    if (!info.file || !info.file.type.startsWith('image/')) {
+      message.warning('Sadece resim dosyalarını yükleyebilirsiniz.', 2);
+      setFile(null);
       return;
     }
-    setFileList(fileList);
+
+    setFile(info.file);
   };
 
   const handleAdd = async () => {
-    if (!name.trim() || !price.trim()) {
-      message.warning('Lütfen tüm zorunlu alanları doldurunuz.',2);
+    if (!name.trim() || !price.trim() || !file) {
+      message.warning('Lütfen tüm zorunlu alanları doldurunuz.', 2);
       return;
     }
-
-    if (fileList.length === 0) {
-      message.warning('Lütfen ürününüz için bir resim seçin.',2);
-      return;
-    }
-
-    const selectedFile = fileList[0].originFileObj;
 
     try {
-      // Doğru dosya türlerini kontrol etme
-      const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-      if (!allowedFileTypes.includes(selectedFile.type)) {
-        message.warning('Sadece JPG, PNG ve JPEG formatındaki resim dosyalarını yükleyebilirsiniz.',2);
-        return;
-      }
-
       // Dosya adını belirleme
-      const storageRef = ref(storage, `images/${selectedFile.name}`);
+      const storageRef = ref(storage, `images/${file.name}`);
 
       // Dosyayı Firebase Storage'a yükleme
-      await uploadBytes(storageRef, selectedFile);
+      await uploadBytes(storageRef, file);
 
       // Dosyanın URL'sini alma
       const downloadURL = await getDownloadURL(storageRef);
@@ -63,12 +51,12 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
       setName('');
       setPrice('');
       setDescription('');
-      setFileList([]);
+      setFile(null);
 
       // Modal'ı kapat
       onClose();
     } catch (error) {
-      message.error('Dosya yükleme hatası lütfen tekrar deneyin',2);
+      message.error('Dosya yükleme hatası, lütfen tekrar deneyin', 2);
     }
   };
 
@@ -82,24 +70,56 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
     },
   };
 
+  const handleCancel = () => {
+    // State değerlerini sıfırla
+    setName('');
+    setPrice('');
+    setDescription('');
+    setFile(null);
+
+    // Modal'ı kapat
+    onClose();
+  };
+
 
   return (
-    <Modal visible={isOpen} onCancel={onClose} centered footer={null}>
+    <Modal visible={isOpen} onCancel={handleCancel} centered footer={null}>
       <div style={{ textAlign: 'center' }}>
         <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '20px' }}>
           Ekle <ArrowRightOutlined /> "{selectedCategory}"
         </h2>
 
-        <Upload {...uploadProps} onChange={handleChange}>
-          <Button icon={<UploadOutlined />}>Resim Seç</Button>
-        </Upload>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '10px' }}>
+          <Upload
+            showUploadList={false}
+            beforeUpload={(file) => {
+              handleChange({ file });
+              return false;
+            }}
+          >
+            {file ? (
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <img src={URL.createObjectURL(file)} alt="Preview" style={{ maxWidth: '100%', maxHeight: '100px', marginRight: '10px' }} />
+                <Button
+                  type="dashed"
+                  style={{ background: 'rgba(255,255,255,0.7)' }}
+                  icon={<UploadOutlined />}
+                >
+                  Resim Seç
+                </Button>
+              </div>
+            ) : (
+              <Button icon={<UploadOutlined />}>Resim Seç</Button>
+            )}
+          </Upload>
 
-        <Input
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ marginBottom: '10px', marginTop:"10px" }}
-        />
+          <Input
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ marginBottom: '10px', marginTop: '10px' }}
+          />
+        </div>
 
         <Input
           placeholder="Price"
@@ -119,7 +139,7 @@ const ModalComponentAddContent = ({ isOpen, onClose, onAdd, selectedCategory }) 
           <Button type="primary" style={{ background: 'green', marginRight: '10px' }} onClick={handleAdd}>
             Add
           </Button>
-          <Button danger onClick={onClose}>
+          <Button danger onClick={handleCancel}>
             Cancel
           </Button>
         </div>
