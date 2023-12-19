@@ -5,3 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.blur {
+    filter: blur(8px);
+    pointer-events: none; 
+  }
+
