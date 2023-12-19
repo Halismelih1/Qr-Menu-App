@@ -13,13 +13,13 @@ const Welcome = () => {
       {/* Logo */}
       <div className="mt-40">
       <Link to="/login">
-          <img src="assets/degirmenLogo.png" alt="Logo" className="h-20 cursor-pointer" />
+          <img src="assets/degirmenLogoRemove.png" alt="Logo" className="h-20 cursor-pointer border-b-2 border-black " />
         </Link>
         </div>
 
       {/* Üst Div (Görsel ve Hoşgeldiniz Metni) */}
       <div className="text-white text-center p-4 md:p-8">
-        <h1 className="text-2xl md:text-6xl font-extrabold mb-2 md:mb-4 m-16">Hoşgeldiniz!</h1>
+        <h1 className="text-2xl md:text-6xl font-extrabold mb-2 md:mb-4 m-16 text-black">Hoşgeldiniz!</h1>
         <p className="text-gray-900">Tadını çıkarın, özel lezzetlerimizi keşfedin.</p>
       </div>
 

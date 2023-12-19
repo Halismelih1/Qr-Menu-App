@@ -24,7 +24,6 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     }
     return isImage;
   };
-
   const handleImageUpload = async (file, onSuccess) => {
     if (!file) {
       onSuccess(new Error('Dosya bilgisi bulunamadı.'));
@@ -65,13 +64,11 @@ const ModalComponentEditContent = ({ isOpen, onClose, onSave, content }) => {
     beforeUpload,
     showUploadList: false, 
   };
-
   const handleCancel = () => {
     // Eğer kullanıcı işlemi iptal ederse, resmi güncelleme
     setNewPicture(content.picture || '');
     onClose();
   };
-
   const handleSave = () => {
 
     if (!newName.trim() || !newPrice.trim() || !newPicture) {
