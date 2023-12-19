@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Menu as AntMenu, Drawer, Button, Row, Col, Card,Typography ,Collapse } from 'antd';
+import { LeftOutlined,MenuOutlined} from '@ant-design/icons';
 import LazyLoad from 'react-lazy-load';
 
 
@@ -9,11 +10,9 @@ const Menu = ({ categoryItems, categories }) => {
 
   const [filteredItems, setFilteredItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(true);
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
   const [expandedDescription, setExpandedDescription] = useState(null);
-
-
+  const [drawerVisible, setDrawerVisible] = useState(true);
 
 
   const { Panel } = Collapse;
@@ -24,7 +23,6 @@ const Menu = ({ categoryItems, categories }) => {
 
   useEffect(() => {
     setFilteredItems([]);
-
   }, []);
 
   const filterItemsByCategory = (category) => {
@@ -41,19 +39,11 @@ const Menu = ({ categoryItems, categories }) => {
     }
   };
 
-
-  const onCloseDrawer = () => {
-    setDrawerOpen(false);
-  };
-
-  const handleCategoryClick = (category) => {
-    filterItemsByCategory(category);
-    onCloseDrawer();
-  };
-
-
-
  
+  const handleCategoryClick = (category) => {
+    setDrawerVisible(false); 
+    filterItemsByCategory(category);
+  };
 
   const cardStyle = {
     width: '100%',
@@ -61,6 +51,14 @@ const Menu = ({ categoryItems, categories }) => {
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     overflow: 'hidden', 
+    marginTop:"30px"
+  };
+
+  const handleBackButtonClick = () => {
+    setSelectedCategory(null);
+    setFilteredItems([]);
+    setHasSelectedCategory(false);
+    setDrawerVisible(true); 
   };
 
 
@@ -71,45 +69,66 @@ const Menu = ({ categoryItems, categories }) => {
   className={'min-h-screen text-gray-800 p-4 '}
   style={{
     backgroundImage: hasSelectedCategory
-      ? 'url(/assets/categorybg.jpg)'
+      ? 'none'
       : `url(/assets/menubg.png)`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   }}
 >
+{hasSelectedCategory && (
+        <Button
+        type="primary"
+        icon={<LeftOutlined />}
+        size="medium"
+        style={{
+          position:"fixed",
+          zIndex: 2,
+          color:"black",
+          fontWeight:"bold",
+          background: "white",
+          marginBottom: "10px",
+          border:"1px solid black"
+        }}
+        onClick={handleBackButtonClick}
+      >
+        Kategorilere Dön
+      </Button>
+      )}
+
   <Row justify="center" align="middle" gutter={[16, 16]}>
     <Col span={24}></Col>
 
     <Drawer
       title={
-        <Title level={3} >
-          Kategoriler
+        <Title level={3} style={{marginTop:"10px"}} >
+         <MenuOutlined style={{ fontSize: "20px"}} /> Kategoriler
         </Title>
       }
       placement="left"
       closable={false}
-      open={drawerOpen}
       style={{ padding: 0, textAlign: 'center', background: 'rgba(255, 255, 255, 0.6)' }}
       width="60%"
       destroyOnClose={true}
+      visible={drawerVisible}
+
     >
       {categories.map((category, i) => (
          <Paragraph
          style={{
            margin: '15px',
            justifyContent: 'center',
-           fontSize: '18',
+           fontSize: '18px',
            fontFamily: 'Amatic SC, cursive',
            color: 'black', 
            fontWeight: 'bold', 
-           letterSpacing: '1px', 
+           letterSpacing: '2px', 
          }}
          key={i}
          onClick={() => handleCategoryClick(category)}
        >
          {category}
        </Paragraph>
-      ))}
+      ))}                
     </Drawer>
    
         {filteredItems.length > 0 ? (
