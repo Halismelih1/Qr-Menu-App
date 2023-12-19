@@ -145,7 +145,7 @@ const Menu = ({ categoryItems, categories }) => {
   width="80%" // Adjust the width as needed
   style={{
     ...modalStyle,
-    transform: `scale(${initialModalAnimation ? 0.8 : 1})`,
+    transform: `scale(${initialModalAnimation ? 0.9 : 1})`,
     transition: 'transform 0.5s ease',
   }}
   closable={false}
