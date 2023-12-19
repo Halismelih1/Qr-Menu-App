@@ -7,7 +7,7 @@
 
 
 .blur {
-    filter: blur(8px);
+    filter: blur(4px);
     pointer-events: none; 
   }
 
