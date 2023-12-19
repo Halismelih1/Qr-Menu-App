@@ -12,7 +12,7 @@ const Welcome = () => {
     }} >
       {/* Logo */}
       <div className="mt-40">
-      <Link to="/login">
+      <Link to="/">
           <img src="assets/degirmenLogoRemove.png" alt="Logo" className="h-20 cursor-pointer border-b-2 border-black " />
         </Link>
         </div>
