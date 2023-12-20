@@ -469,24 +469,45 @@ const Admin = () => {
       </Button>
 
       <div className="flex items-center mt-2">
-        <span
-          className="cursor-pointer text-green-500"
-          onClick={() => handleAddContent(selectedModalCategory)}
-        >
-          <PlusCircleOutlined />
-        </span>
-        <span
-          className="cursor-pointer text-blue-500 ml-2"
-          onClick={() => handleEditCategory(selectedModalCategory)}
-        >
-          <EditOutlined />
-        </span>
-        <span
-          className="cursor-pointer text-red-500 ml-2"
-          onClick={() => handleDeleteCategory(selectedModalCategory)}
-        >
-          <DeleteOutlined />
-        </span>
+      <span
+    className="cursor-pointer text-green-500"
+    onClick={() => {
+      if (selectedModalCategory) {
+        handleAddContent(selectedModalCategory);
+      } else {
+        // Display a message if no category is selected
+        message.warning('Lütfen önce bir kategori seçin.', 2);
+      }
+    }}
+  >
+    <PlusCircleOutlined />
+  </span>
+  <span
+    className="cursor-pointer text-blue-500 ml-2"
+    onClick={() => {
+      if (selectedModalCategory) {
+        handleEditCategory(selectedModalCategory);
+      } else {
+        // Display a message if no category is selected
+        message.warning('Lütfen önce bir kategori seçin.', 2);
+      }
+    }}
+  >
+    <EditOutlined />
+  </span>
+  <span
+    className="cursor-pointer text-red-500 ml-2"
+    onClick={() => {
+      if (selectedModalCategory) {
+        handleDeleteCategory(selectedModalCategory);
+      } else {
+        // Display a message if no category is selected
+        message.warning('Lütfen önce bir kategori seçin.', 2);
+      }
+    }}
+  >
+    <DeleteOutlined />
+  </span>
               </div>
             </div>
          
