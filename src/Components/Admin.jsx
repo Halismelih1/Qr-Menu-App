@@ -439,47 +439,54 @@ const Admin = () => {
       </header>
 
       <div className="mb-8 flex flex-col md:flex-row">
-        <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
-          <div className="flex items-center mb-4 m-8 justify-between">
-            
-          <Button
-  type="link"
-  style={{
-    display: "flex",
-    color: "black",
-    fontSize: "16px",
-    padding: "8px",
-    border: "1px solid black",
-    cursor: "pointer",
-    alignItems: "center",
-    boxShadow:
-      "rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset",
-  }}
-  onClick={() => {
-    setCategoriesModalIsOpen(true);
-    setSelectedModalCategory(null);
-  }}
->
-  Kategorileri Gör
-  {selectedModalCategory && (
-    <span style={{ marginLeft: "8px", fontWeight: "bold" }}>
-     - {selectedModalCategory}
-    </span>
-  )}
-</Button>
-            <div className="ml-2 flex items-center">
-              <span
-                className="cursor-pointer text-green-500"
-                onClick={() => handleAddContent(selectedModalCategory)}
-              >
-                <PlusCircleOutlined />
-              </span>
-                <span className="cursor-pointer text-blue-500 ml-2" onClick={() => handleEditCategory(selectedModalCategory)}>
-                  <EditOutlined />
-                </span>
-                <span className="cursor-pointer text-red-500 ml-2" onClick={() => handleDeleteCategory(selectedModalCategory)}>
-                  <DeleteOutlined />
-                </span>
+  <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
+    <div className="flex flex-col items-center mb-4 m-8 justify-between">
+
+      <Button
+        type="link"
+        style={{
+          display: "flex",
+          color: "black",
+          fontSize: "16px",
+          padding: "8px",
+          border: "1px solid black",
+          cursor: "pointer",
+          alignItems: "center",
+          boxShadow:
+            "rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset",
+        }}
+        onClick={() => {
+          setCategoriesModalIsOpen(true);
+          setSelectedModalCategory(null);
+        }}
+      >
+        Kategorileri Gör
+        {selectedModalCategory && (
+          <span style={{ marginLeft: "8px", fontWeight: "bold" }}>
+            - {selectedModalCategory}
+          </span>
+        )}
+      </Button>
+
+      <div className="flex items-center mt-2">
+        <span
+          className="cursor-pointer text-green-500"
+          onClick={() => handleAddContent(selectedModalCategory)}
+        >
+          <PlusCircleOutlined />
+        </span>
+        <span
+          className="cursor-pointer text-blue-500 ml-2"
+          onClick={() => handleEditCategory(selectedModalCategory)}
+        >
+          <EditOutlined />
+        </span>
+        <span
+          className="cursor-pointer text-red-500 ml-2"
+          onClick={() => handleDeleteCategory(selectedModalCategory)}
+        >
+          <DeleteOutlined />
+        </span>
               </div>
             </div>
          
