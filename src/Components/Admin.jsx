@@ -11,7 +11,7 @@ import ModalComponentAddContent from '../Modals/ModalComponentAddContent';
 import ModalComponentEditCategory from '../Modals/ModalComponetEditCategory'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
-import { Button, Card,Typography,message } from 'antd';
+import { Button, Card,Modal,Typography,message } from 'antd';
 import { LogoutOutlined,HomeOutlined ,FileAddOutlined,PushpinOutlined, EditOutlined, DeleteOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
@@ -31,8 +31,13 @@ const Admin = () => {
   const [editCategoryModalIsOpen, setEditCategoryModalIsOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null); 
   const [addContentModalIsOpen, setAddContentModalIsOpen] = useState(null); 
+  const [selectedModalCategory, setSelectedModalCategory] = useState(null);
+  const [categoriesModalIsOpen, setCategoriesModalIsOpen] = useState(false);
 
-  
+
+
+
+ 
 
   const navigate = useNavigate();
 
@@ -379,6 +384,19 @@ const Admin = () => {
   }
 
 
+  const handleOpenCategoryModal = () => {
+    setSelectedModalCategory(null);
+    setAddCategoryModalIsOpen(true);
+  };
+
+  const handleModalCategoryClick = (category) => {
+    setSelectedModalCategory(category);
+    setAddCategoryModalIsOpen(false);
+    handleCategoryClick(category);
+  };
+
+
+
 
   return (
     <div className="container min-h-screen overflow-y-hidden mx-auto mt-8 p-4">
@@ -428,128 +446,161 @@ const Admin = () => {
           Çıkış Yap
         </Button>
       </header>
+
       <div className="mb-8 flex flex-col md:flex-row">
-      <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
-    {categories.map((category,i) => (
-            <div key={i} className="flex items-center mb-4 m-8 justify-between">
-              <PushpinOutlined />
-            <Button
-          type="primary"
-          onClick={() => handleCategoryClick(category)}
+        <div className="md:w-1/4 mb-4 md:mb-0 mr-4">
+          <div className="flex items-center mb-4 m-8 justify-between">
+            
+          <Button
+          type="link"
           style={{
-            width: '120px',
-            height: '40px',
-            backgroundColor: '#ffffff',
-            borderColor: 'black',
-            marginRight: '8px',
-            borderBottom: '4px solid black',
-            color:"black",
+            display:"flex",
+          color: 'black',
+          fontSize: '16px',
+          padding: '8px',
+          border: '1px solid black',
+          cursor: 'pointer',
+          alignItems:"center",
+          boxShadow: "rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset",
           }}
-          
-        >
-          {category}
-        </Button>
-        
-        <div className="ml-2 flex items-center">
-      <span
-        className="cursor-pointer text-green-500"
-        onClick={() => handleAddContent(category)}
-      >
-        <PlusCircleOutlined />
-      </span>
-      <span className="cursor-pointer text-blue-500 ml-2" onClick={() => handleEditCategory(category)}>
-        <EditOutlined />
-      </span>
-      <span className="cursor-pointer text-red-500 ml-2" onClick={() => handleDeleteCategory(category)}>
-        <DeleteOutlined />
-      </span>
-    </div>
-  </div>
-))}
-  </div>
-  <hr />
-  
-  <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(Array.isArray(adminData) ? adminData : []).map((item,i) => (
-          <Card
-            key={i}
-            style={{ width: '100%'}}
-            cover={
-              item.picture ? (
-                <img
-                  alt={item.name}
-                  src={item.picture}
-                  style={{
-                    objectFit: 'cover',
-                    width: '100%', 
-                    height: '170px', 
-                  }}
-                />
-              ) : (
-                <div className="text-center mt-4">
-                  Bu ürün için eklenmiş bir resim bulunmamaktadır.
-                </div>
-              )
-            }
-            actions={[
-              <EditOutlined
-                key="edit"
-                onClick={() => handleEditContent(item)}
-                style={{ color: 'blue' }}
-
-              />,
-              <DeleteOutlined
-                key="delete"
-                onClick={() => handleDeleteContent(item.id, item.name)}
-                style={{ color: 'red' }}
-
-              />,
-            ]}
+          onClick={() => {
+          setCategoriesModalIsOpen(true);
+          setSelectedModalCategory(null);
+          }}
           >
-            <Meta
-              title={<span>{item.name}</span>}
-              description={<p className='mb-2'> <span className='font-bold'>Açıklama:</span>{item.description || 'Bu ürün için bir açıklama bulunamadı.'}</p>}
-            />
-            <p>Fiyat: {item.price} &#8378;</p>
-          </Card>
-        ))}
+          Kategorileri Gör
+           </Button>         
+            <div className="ml-2 flex items-center">
+              <span
+                className="cursor-pointer text-green-500"
+                onClick={() => handleAddContent(selectedCategory)}
+              >
+                <PlusCircleOutlined />
+              </span>
+                <span className="cursor-pointer text-blue-500 ml-2" onClick={() => handleEditCategory(category)}>
+                  <EditOutlined />
+                </span>
+                <span className="cursor-pointer text-red-500 ml-2" onClick={() => handleDeleteCategory(category)}>
+                  <DeleteOutlined />
+                </span>
+              </div>
+            </div>
+         
+        </div>
+        <hr />
+        <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(Array.isArray(adminData) ? adminData : []).map((item, i) => (
+            <Card
+              key={i}
+              style={{ width: '100%' }}
+              cover={
+                item.picture ? (
+                  <img
+                    alt={item.name}
+                    src={item.picture}
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: '170px',
+                    }}
+                  />
+                ) : (
+                  <div className="text-center mt-4">
+                    Bu ürün için eklenmiş bir resim bulunmamaktadır.
+                  </div>
+                )
+              }
+              actions={[
+                <EditOutlined
+                  key="edit"
+                  onClick={() => handleEditContent(item)}
+                  style={{ color: 'blue' }}
+                />,
+                <DeleteOutlined
+                  key="delete"
+                  onClick={() => handleDeleteContent(item.id, item.name)}
+                  style={{ color: 'red' }}
+                />,
+              ]}
+            >
+              <Meta
+                title={<span>{item.name}</span>}
+                description={<p className='mb-2'> <span className='font-bold'>Açıklama:</span>{item.description || 'Bu ürün için bir açıklama bulunamadı.'}</p>}
+              />
+              <p>Fiyat: {item.price} &#8378;</p>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
-  
-     
-  
-  
+
+
       <ModalComponentAddContent
         isOpen={addContentModalIsOpen}
         onClose={handleModalAddContentClose}
         onAdd={handleModalAddContentSave}
         selectedCategory={selectedCategory}
       />
-  
+
       <ModalComponentEditCategory
         isOpen={editCategoryModalIsOpen}
         onClose={() => setEditCategoryModalIsOpen(false)}
         onSave={handleModalEditCategorySave}
         editingCategory={editingCategory}
       />
+
+<Modal
   
+  open={categoriesModalIsOpen}
+  onCancel={() => setCategoriesModalIsOpen(false)}
+  footer={null}
+  bodyStyle={{ padding: '20px',  display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+>
+  <div>
+    {categories.map((category, i) => (
+      
+      <p
+        key={i}
+        style={{
+          margin: '10px',
+          backgroundColor: selectedModalCategory === category ? '#e6f7ff' : '#ffffff',
+          color: 'black',
+          fontWeight: 'bold',
+          padding: '10px',
+          width: '200px',
+          textAlign: 'center',
+          borderBottom:"1px solid black",
+          maxHeight: '80vh', 
+          overflowY: 'auto',
+          
+        }}
+        onClick={() => {
+          setSelectedModalCategory(category);
+          setCategoriesModalIsOpen(false);
+          handleCategoryClick(category);
+        }}
+      >
+       <PushpinOutlined /> {category}
+      </p>
+    ))}
+  </div>
+</Modal>
+
       <ModalComponentAddCategory
         isOpen={addCategoryModalIsOpen}
         onClose={handleModalAddCategoryClose}
         onSave={handleModalAddCategorySave}
       />
-  
-  {editingContent && (
-  <ModalComponentEditContent
-    isOpen={editModalIsOpen}
-    onClose={handleModalEditClose}
-    onSave={handleModalEditSave}
-    content={editingContent}
-  />
-)}
-  
+
+      {editingContent && (
+        <ModalComponentEditContent
+          isOpen={editModalIsOpen}
+          onClose={handleModalEditClose}
+          onSave={handleModalEditSave}
+          content={editingContent}
+        />
+      )}
     </div>
   );
+};
 
-}
 export default Admin;
