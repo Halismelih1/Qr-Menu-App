@@ -574,15 +574,20 @@ const Admin = () => {
       />
 
 <Modal
-  
   open={categoriesModalIsOpen}
   onCancel={() => setCategoriesModalIsOpen(false)}
   footer={null}
-  bodyStyle={{ padding: '20px',  display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+  bodyStyle={{
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    maxHeight: '60vh', // Set the maximum height here
+    overflowY: 'auto', // Enable scrolling if the content exceeds the maximum height
+  }}
 >
   <div>
     {categories.map((category, i) => (
-      
       <p
         key={i}
         style={{
@@ -593,10 +598,7 @@ const Admin = () => {
           padding: '10px',
           width: '200px',
           textAlign: 'center',
-          borderBottom:"1px solid black",
-          maxHeight: '80vh', 
-          overflowY: 'auto',
-          
+          borderBottom: '1px solid black',
         }}
         onClick={() => {
           setSelectedModalCategory(category);
@@ -604,7 +606,7 @@ const Admin = () => {
           handleCategoryClick(category);
         }}
       >
-       <PushpinOutlined /> {category}
+        <PushpinOutlined /> {category}
       </p>
     ))}
   </div>
