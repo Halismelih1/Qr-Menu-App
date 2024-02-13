@@ -7,7 +7,13 @@ import { getFirestore } from 'firebase/firestore';
 
 
 const firebaseConfig = {
-   Secret
+    apiKey: "AIzaSyCTGDGkxEt7LY1PPmZp9oLO72t0OeKKp5g",
+    authDomain: "qr-menu-ep.firebaseapp.com",
+    projectId: "qr-menu-ep",
+    storageBucket: "qr-menu-ep.appspot.com",
+    messagingSenderId: "320241078228",
+    appId: "1:320241078228:web:446b7baa470a4e80c15041",
+    measurementId: "G-TCZJLJ7CCF"
   };
 
    const app = initializeApp(firebaseConfig);
