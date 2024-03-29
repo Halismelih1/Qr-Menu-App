@@ -16,7 +16,6 @@ const firebaseConfig = {
     measurementId: "G-TCZJLJ7CCF"
   };
 
-  // Unvalid Configs
    const app = initializeApp(firebaseConfig);
    const storage = getStorage(app);
    const auth = getAuth(app);
