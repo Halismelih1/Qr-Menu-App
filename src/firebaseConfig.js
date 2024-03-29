@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase/firestore';
 
 
 
-
+// Unvalid Configs
 const firebaseConfig = {
     apiKey: "AIzaSyCTGDGkxEt7LY1PPmZp9oLO72t0OeKKp5g",
     authDomain: "qr-menu-ep.firebaseapp.com",
@@ -16,6 +16,7 @@ const firebaseConfig = {
     measurementId: "G-TCZJLJ7CCF"
   };
 
+  // Unvalid Configs
    const app = initializeApp(firebaseConfig);
    const storage = getStorage(app);
    const auth = getAuth(app);
